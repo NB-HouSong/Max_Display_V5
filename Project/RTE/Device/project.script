@@ -1,0 +1,4 @@
+load STM32F072RBTx 
+project name STCubeGenerated 
+project toolchain "MDK-ARM V5" 
+project path "C:\Users\ninebot\Desktop\e-bike\ebike仪表在调程序-STM32F072\Ebike_Meter_Project -freeRTOS\Project\RTE\Device\STM32F072RBTx\" 
