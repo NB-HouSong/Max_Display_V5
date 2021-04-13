@@ -70,7 +70,14 @@ void gpioSetToggle(GpioPinName pin)
 
 bool gpioGetInput(GpioPinName pin)
 {
-    return GPIO_ReadInputDataBit(gpioPin[pin].type, gpioPin[pin].initType.GPIO_Pin) == 1;
+    if(pin == GpioInLeftButton || pin == GpioInRightButton)
+    {
+        return GPIO_ReadInputDataBit(gpioPin[pin].type, gpioPin[pin].initType.GPIO_Pin) == 0;
+    }
+    else
+    {
+        return GPIO_ReadInputDataBit(gpioPin[pin].type, gpioPin[pin].initType.GPIO_Pin) == 1;
+    }
 }
 
 bool gpioGetOutput(GpioPinName pin)

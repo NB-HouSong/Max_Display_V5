@@ -21,8 +21,7 @@
 #define SPI_DATAERROR						3
 #define SPI_FIRSTTIME						4
 
-#define  NFC_SPI    SPI1
-#define  FLASH_SPI  SPI2
+#define  NFC_SPI            SPI1
 
 #define  SPI_GPIO_PORT      GPIOB
 #define  SPI_PIN_CLK        GPIO_Pin_3
@@ -32,12 +31,6 @@
 #define  PORT_NSS			GPIOA
 #define  PIN_NSS			GPIO_Pin_15		// CS 17550
 
-//#define  SPI2_PIN_CLK       GPIO_Pin_13
-//#define  SPI2_PIN_MOSI      GPIO_Pin_15    
-//#define  SPI2_PIN_MISO      GPIO_Pin_14
-
-//#define  SPI2_CS_PORT				GPIOB
-//#define  SPI2_CS_PIN				GPIO_Pin_12		// CS FLASH
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

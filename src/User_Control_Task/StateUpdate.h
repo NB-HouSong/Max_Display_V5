@@ -34,10 +34,9 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 void Check_IAP_Mode(void);
-
+void Check_Device_Status(void);
 void Query_Send_Data_Pro(void);
-void BMS_Data_Update(void);
-void Mode_Shift(void);
+
 #endif
 
 /************************ (C) COPYRIGHT Ninebot *****END OF FILE****/

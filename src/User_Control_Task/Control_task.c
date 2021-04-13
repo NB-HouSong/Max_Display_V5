@@ -53,16 +53,10 @@ void Wireless_Power_Ctr_Handler(void)
 	static u16 Time_cnt = 0;                     //无线充故障检测计时
 	static u16 Time_cnt1 = 0;                    //无线充无故障计时
 	static u8 Last_input_state = 0;              //无限充故障检测脚上次输入状态
-	static u8 Wireless_Charge_Vol_TSD = 180;    //无线充基准电压18V
-	static u8 Wireless_Charge_Vol_Offset = 20;  //无线充电压最大偏移量2V
+	static u8 Wireless_Charge_Vol_TSD = 210;    //无线充基准电压21V
+	static u8 Wireless_Charge_Vol_Offset = 30;  //无线充电压最大偏移量3V
 	static u16 s_cnt = 0;
 
-    //TODO: test
-    gpioSetOutput(GpioOutWirelessChargePowCtrl, true); //打开电源
-    gpioSetOutput(GpioOutTurnSignalRgbPowCtrl, true); //打开电源
-    gpioSetOutput(GpioOutFrountLedCtrl, true); //打开电源
-    return;
-    //end test
 	//无线充故障检测
 	if(Last_input_state == 1 && gpioGetInput(GpioInWirelessFB) == 0)
 	{
@@ -99,7 +93,6 @@ void Wireless_Power_Ctr_Handler(void)
     {
         gpioSetOutput(GpioOutWirelessChargePowCtrl, false); //关闭电源
     }
-		
 	else
 	{
 		 if(g_bool[B_WIRELESS_ERR])
@@ -122,9 +115,9 @@ void Wireless_Power_Ctr_Handler(void)
             gpioSetOutput(GpioOutWirelessChargePowCtrl, false); //关闭电源
         }
 	}
-    
-	if(g_bool[B_SLEEP_MODE] == 1)
-		s_cnt = 0;
+//    
+//	if(g_bool[B_SLEEP_MODE] == 1)
+//		s_cnt = 0;
 }
 
 /*****************************************************************
@@ -314,7 +307,6 @@ void Control_Task(void *pvParameters)
 		 vTaskDelay(1);      
 	}
 }
-
 
 //====================================================================================//
 

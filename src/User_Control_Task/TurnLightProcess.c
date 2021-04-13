@@ -1,7 +1,7 @@
 #include "TurnLightProcess.h"
 
-#define LED_STATE_HIGHT_LIMIT  1489     // 电压值大于此值认为转向灯短路  大约 1.2V，   正常值在 0.7V
-#define LED_STATE_LOW_LIMIT    496      // 电压值小于此值认为转向灯开路  大约 0.4V   正常值在 0.7V
+#define LED_STATE_HIGHT_LIMIT  2000     // 电压值大于此值认为转向灯短路  大约 1.2V，   正常值在 0.7V
+#define LED_STATE_LOW_LIMIT    500      // 电压值小于此值认为转向灯开路  大约 0.4V   正常值在 0.7V
 
 typedef enum E_LIGHT_STATE
 {
@@ -10,16 +10,6 @@ typedef enum E_LIGHT_STATE
     LIGHT_STATE_RIGHT_ON,
     LIGHT_STATE_BROKEN
 } LIGHT_STATE;
-
-typedef enum LED_STATUS_enum
-{
-    LED_ALL_OFF         = 0x00,
-    LED_ALL_ON          = 0x03,
-    LED_LEFT_ON         = 0x01,
-    LED_RIGHT_ON        = 0x02,
-    LED_LEFT_BROKEN     = 0x04,
-    LED_RIGHT_BROKEN    = 0x08
-} LED_STATUS;
 
 static uint8_t   g_turnLightStatus = 0;
 
@@ -32,7 +22,6 @@ void turnLightProcess(void)
 
     static LIGHT_STATE lightState = LIGHT_STATE_IDLE;
 
-
     //判断车辆状态和通信状态
     if(g_myself_data.Scooter_Info.ControllerStatus == UNLOCK && g_myself_data.CommuTimeout == 0)
     {
@@ -44,6 +33,8 @@ void turnLightProcess(void)
         
             g_turnLightStatus &= ~LED_LEFT_ON;
             g_turnLightStatus &= ~LED_RIGHT_ON;
+            g_bool[B_TURN_LIGHT_FLASH] = OFF;
+
             if( gpioGetInput(GpioInLeftButton) == true )
             {
                 if(statr_cnt++> 4)
@@ -73,26 +64,31 @@ void turnLightProcess(void)
                 if(++s_cnt_L % 100 == 0)
                 {
                     gpioSetToggle(GpioOutLeftLightCtrl);
-                    s_cnt_adc_start = 0;                //adc 开始采样计时清零
+                    s_cnt_adc_start = 0;                                    //adc 开始采样计时清零
                 }
                 if(gpioGetOutput(GpioOutLeftLightCtrl) == true)             //判断转向灯控制引脚是否被置位
                 {
-                    if(s_cnt_adc_start++ > 4)           //adc 延时20ms 取值
-                    {
-                        s_cnt_adc_start = 5;
-                        //读取 右转向灯电压
-                        if( ADC_Get_ConversionValue(AdcChanelLeftLightOverCur) > LED_STATE_HIGHT_LIMIT ||
-                            ADC_Get_ConversionValue(AdcChanelLeftLightOverCur) < LED_STATE_LOW_LIMIT )
-                        {
-                            g_turnLightStatus |= LED_LEFT_BROKEN;
+                    g_bool[B_TURN_LIGHT_FLASH] = ON;
+//                    if(s_cnt_adc_start++ > 4)           //adc 延时20ms 取值
+//                    {
+//                        s_cnt_adc_start = 5;
+//                        //读取 右转向灯电压
+//                        if( ADC_Get_ConversionValue(AdcChanelLeftLightOverCur) > LED_STATE_HIGHT_LIMIT ||
+//                            ADC_Get_ConversionValue(AdcChanelLeftLightOverCur) < LED_STATE_LOW_LIMIT )
+//                        {
+//                            g_turnLightStatus |= LED_LEFT_BROKEN;
 
-                            lightState = LIGHT_STATE_BROKEN;
-                        }
-                        else
-                        {
-                            g_turnLightStatus &= ~LED_LEFT_BROKEN;
-                        }
-                    }
+//                            lightState = LIGHT_STATE_BROKEN;
+//                        }
+//                        else
+//                        {
+//                            g_turnLightStatus &= ~LED_LEFT_BROKEN;
+//                        }
+//                    }
+                }
+                else
+                {
+                    g_bool[B_TURN_LIGHT_FLASH] = OFF;
                 }
             }
             else
@@ -112,22 +108,27 @@ void turnLightProcess(void)
 
                 if(gpioGetOutput(GpioOutRightLightCtrl) == true)                //判断转向灯控制引脚是否被置位
                 {
-                    if(s_cnt_adc_start++ > 4)               //adc 延时20ms 取值
-                    {
-                        s_cnt_adc_start = 5;
-                        //读取 右转向灯电压
-                        if( ADC_Get_ConversionValue(AdcChanelRightLightOverCur) > LED_STATE_HIGHT_LIMIT ||
-                            ADC_Get_ConversionValue(AdcChanelRightLightOverCur) < LED_STATE_LOW_LIMIT )
-                        {
-                            g_turnLightStatus |= LED_RIGHT_BROKEN;
+                    g_bool[B_TURN_LIGHT_FLASH] = ON;
+//                    if(s_cnt_adc_start++ > 4)               //adc 延时20ms 取值
+//                    {
+//                        s_cnt_adc_start = 5;
+//                        //读取 右转向灯电压
+//                        if( ADC_Get_ConversionValue(AdcChanelRightLightOverCur) > LED_STATE_HIGHT_LIMIT ||
+//                            ADC_Get_ConversionValue(AdcChanelRightLightOverCur) < LED_STATE_LOW_LIMIT )
+//                        {
+//                            g_turnLightStatus |= LED_RIGHT_BROKEN;
 
-                            lightState = LIGHT_STATE_BROKEN;
-                        }
-                        else
-                        {
-                            g_turnLightStatus &= ~LED_RIGHT_BROKEN;
-                        }
-                    }
+//                            lightState = LIGHT_STATE_BROKEN;
+//                        }
+//                        else
+//                        {
+//                            g_turnLightStatus &= ~LED_RIGHT_BROKEN;
+//                        }
+//                    }
+                }
+                else
+                {
+                    g_bool[B_TURN_LIGHT_FLASH] = OFF;
                 }
             }
             else
@@ -139,8 +140,8 @@ void turnLightProcess(void)
             // 转向灯异常，关闭转向灯控制引脚
             gpioSetOutput(GpioOutRightLightCtrl, false);
             gpioSetOutput(GpioOutLeftLightCtrl, false);
-
-            if(gpioGetInput(GpioInLeftButton) == true && gpioGetInput(GpioInRightButton) == true)
+            
+            if(gpioGetInput(GpioInLeftButton) == false && gpioGetInput(GpioInRightButton) == false)
             {
                 lightState = LIGHT_STATE_IDLE;
             }
@@ -153,4 +154,6 @@ void turnLightProcess(void)
         lightState = LIGHT_STATE_IDLE;
         g_turnLightStatus &= (~LED_ALL_ON);
     }
+    
+    g_myself_data.Handle_Bar_Info.TurnSignalLightStatus = g_turnLightStatus;
 }

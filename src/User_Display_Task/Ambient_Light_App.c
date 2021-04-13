@@ -154,16 +154,15 @@ void Ambient_ClearColor(_AMBIENT_LIGHT_OB *p_this)
 
 void Ambient_Timer_Cmp_Update(_AMBIENT_LIGHT_OB *p_this)
 {
-    TIM_SetCompare1(Ambient_TIMER,p_this->control_data.s_rled_value);
-    TIM_SetCompare2(Ambient_TIMER,p_this->control_data.s_gled_value);
-    TIM_SetCompare3(Ambient_TIMER,p_this->control_data.s_bled_value);
-
+    TIM_SetCompare1(Ambient_TIMER, p_this->control_data.s_rled_value);
+    TIM_SetCompare2(Ambient_TIMER, p_this->control_data.s_gled_value);
+    TIM_SetCompare3(Ambient_TIMER, p_this->control_data.s_bled_value);
 }
 
 void Ambient_Light_Set(void)
 {
     // 程序现在30mS运行一次，时间可能需要调整
-    switch(Ambient_light_object.running_mode)
+    switch(g_myself_data.Scooter_Info.AmbientLightMode)
     {
     case STOP_LED://停止
         Ambient_ClearColor(&Ambient_light_object);
@@ -200,14 +199,13 @@ void Ambient_Light_Malloc_Init(_AMBIENT_LIGHT_OB *p_this )
 
     p_this->running_polar = 0;
     p_this->running_cnt = 5;
-    p_this->control_data.s_light_freq = Ambient_TIMER_PERIOD;//default freq
+    p_this->control_data.s_light_freq = Ambient_TIMER_PERIOD / 4;
     p_this->running_mode = STOP_LED;//STOP_LED, CHANGLIANG_LED,BREATHE_LED
     p_this->running_color = g_myself_data.Scooter_Info.AmbientLightColor = 7;  // Amblient Clolor 1.蓝 2. 绿 3.青 4.红 5.? 6.? 7. ?
     p_this->running_lux = g_myself_data.Scooter_Info.AmbientLightLux = 100;
     p_this->running_period = 5;
 
     p_this->ambient_light_device_init = Ambient_Timer_Init;
-    //p_this->ambient_light_switch_init = Ambient_Light_Switch_Init;
 }
 
 

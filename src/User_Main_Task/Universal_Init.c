@@ -98,34 +98,30 @@ void Handle_Timer_Init(void)
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-    //GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_2);
-    GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_0);
+    GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_2);
 
 	TIM_DeInit(HANDLE_TIMER);
     TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
     TIM_TimeBaseStructure.TIM_Period = HANDLE_TIMER_PERIOD;             //1;					    //PWM频率1M/1000=1KHz
-    TIM_TimeBaseStructure.TIM_Prescaler = 48 - 1;					    //48M
-    TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM_TimeBaseStructure.TIM_Prescaler = 6 - 1;					    //48M
+    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
     TIM_TimeBaseInit(HANDLE_TIMER, &TIM_TimeBaseStructure);
 
     TIM_OCStructInit(&TIM_OCInitStructure);
     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+    TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Disable;
 	TIM_OCInitStructure.TIM_Pulse = 0;
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-    TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-
+    TIM_OCInitStructure.TIM_OCNPolarity = TIM_OCPolarity_High;
+    TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Reset;
+    TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCNIdleState_Reset;
 
     TIM_OC1Init(HANDLE_TIMER, &TIM_OCInitStructure);
-
-    //使能预装载
-    TIM_OC1PreloadConfig(HANDLE_TIMER, TIM_OCPreload_Enable);
-    //TIM_ARRPreloadConfig(HANDLE_TIMER, ENABLE);
     TIM_CtrlPWMOutputs(HANDLE_TIMER, ENABLE);
     
     TIM_Cmd(HANDLE_TIMER, ENABLE);
-    
 }
 
 /*****************************************************************
@@ -275,7 +271,7 @@ void ADC_Int(void)
 	ADC_DMACmd(ADC_USE, ENABLE);	//DMA和adc要同时打开
 	ADC_Cmd(ADC_USE, ENABLE);
 
-	while(!ADC_GetFlagStatus(ADC_USE, ADC_FLAG_ADRDY));
+	while(!ADC_GetFlagStatus(ADC_USE, ADC_FLAG_ADEN));
 	//开始校准状态
 	ADC_StartOfConversion(ADC_USE);
 }
@@ -292,12 +288,12 @@ u16 ADC_Get_ConversionValue(u8 Channel)
 	s32 temp32 = 0;
 	u8 i = 0;
 	
-	for(i = 0; i < 8; i++)
+	for(i = 0; i < 4; i++)
 	{
 		temp32 += m_ADCValue[i * AdcChanelMaxNumber + Channel];
 	}
 	
-	return temp32>>3;
+	return temp32 >> 2;
 }
 
 /*****************************************************************
@@ -310,38 +306,14 @@ u16 ADC_Get_ConversionValue(u8 Channel)
 #define EBS_AD_TSD	 175					//EBS霍尔AD采样的最大值  理论值40~210
 void Get_RealVaule(void)
 {
-	g_myself_data.Handle_Bar_Info.GasValue = ADC_Get_ConversionValue(AdcChanelAcc);//*cal_gain[ADC_CH_Oil]/100/2;  //电压放大50倍
-    g_myself_data.Handle_Bar_Info.LeftBreakValue = ADC_Get_ConversionValue(AdcChanelLeftBreak);//*cal_gain[ADC_CH_Oil]/100/2;  //电压放大50倍
-    g_myself_data.Handle_Bar_Info.RightBreakValue = ADC_Get_ConversionValue(AdcChanelRightBreak);//*cal_gain[ADC_CH_Oil]/100/2;  //电压放大50倍
+    g_myself_data.Handle_Bar_Info.GasValue = (ADC_Get_ConversionValue(AdcChanelAcc) >> 4) > 15 ? (ADC_Get_ConversionValue(AdcChanelAcc) >> 4) - 15 : 0;
+    g_myself_data.Handle_Bar_Info.LeftBreakValue = (ADC_Get_ConversionValue(AdcChanelLeftBreak) >> 4) > 15 ? (ADC_Get_ConversionValue(AdcChanelLeftBreak) >> 4) - 15 : 0; 
+    g_myself_data.Handle_Bar_Info.RightBreakValue = (ADC_Get_ConversionValue(AdcChanelRightBreak) >> 4) > 15 ? (ADC_Get_ConversionValue(AdcChanelRightBreak) >> 4) - 15 : 0 ;
+
+    g_myself_data.Handle_Bar_Info.LeftBreakValue = (g_myself_data.Handle_Bar_Info.LeftBreakValue *909 + 7056 + 500)/1000;
+    g_myself_data.Handle_Bar_Info.RightBreakValue = (g_myself_data.Handle_Bar_Info.RightBreakValue *909 + 7056 + 500)/1000;
     
-//    if()
-//    {
-//        g_myself_data.Handle_Bar_Info.WirelessChargerStatus = ADC_Get_ConversionValue(AdcChanelAcc);//*cal_gain[ADC_CH_Oil]/100/2;  //电压放大50倍
-//    }
-//    
-//    g_myself_data.Handle_Bar_Info.GasValue = ADC_Get_ConversionValue(AdcChanelAcc);//*cal_gain[ADC_CH_Oil]/100/2;  //电压放大50倍
-//    g_myself_data.Handle_Bar_Info.GasValue = ADC_Get_ConversionValue(AdcChanelAcc);//*cal_gain[ADC_CH_Oil]/100/2;  //电压放大50倍
-//	g_wireless_charger_vol = ADC_Get_ConversionValue(AdcChanelWirelessChargVoltage);//*cal_gain[ADC_CH_WAIRLESS_CHARGE]/1000;
-
-//	g_12V_vol = ADC_Get_ConversionValue(ADC_CH_12V_COL);//*cal_gain[ADC_CH_12V_COL]/1000;
-
-//	g_myself_data.Handle_Bar_Info.LeftBreakValue = ADC_Get_ConversionValue(ADC_CH_BREAK1);//*cal_gain[ADC_CH_BREAK1]/100/2; 
-//	g_myself_data.Handle_Bar_Info.Break2Value = ADC_Get_ConversionValue(ADC_CH_BREAK2);//*cal_gain[ADC_CH_BREAK2]/100/2; 
-////	if(ADC_Get_ConversionValue(ADC_CH_BREAK_GND) < 1000) //值需要标定
-////	{
-////		g_myself_data.Handle_Bar_Info.Brake1_GND = 1; //有至少1个刹车地线断开
-////	}
-////	else
-////	{
-////		g_myself_data.Handle_Bar_Info.Brake1_GND = 0;
-////	}
-
-
-
-//	if(ADC_Get_ConversionValue(ADC_CH_Oil_GND) < 200) 
-//		g_myself_data.Handle_Bar_Info.Gas_GND = 1;
-//	else
-//		g_myself_data.Handle_Bar_Info.Gas_GND = 0;
+    g_wireless_charger_vol = ADC_Get_ConversionValue(AdcChanelWirelessChargVoltage) * 330 / 4095;
 }
 
 /*****************************************************************
@@ -357,24 +329,21 @@ void Timer2Init(void)      //Timer2,控制采样率
 	//使能TIM2时钟
 
 	//定时器定时时间T计算公式：T=(TIM_Period+1)*(TIM_Prescaler+1)/TIMxCLK
-	TIM_TimeBaseStructure.TIM_Period = 999;
-    //自动重装载值10--定时时间(10*4800/48M)s  16kHz
-	TIM_TimeBaseStructure.TIM_Prescaler =47;//预分频值，+1为分频系数 
+	TIM_TimeBaseStructure.TIM_Period = 100 - 1;
+
+	TIM_TimeBaseStructure.TIM_Prescaler =48 - 1;//预分频值，+1为分频系数 
 	TIM_TimeBaseStructure.TIM_ClockDivision =0; 
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;	//TIM向上计数模式
 	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
-  
-//  TIM_SetAutoreload(TIM2, 999);
 
 	TIM_ClearFlag(TIM2, TIM_IT_Update);//清标志
-//	  /* TIM2触发输出模式选择  */
-//  TIM_SelectOutputTrigger(TIM6, TIM_TRGOSource_Update);
-//	TIM_ITConfig(TIM2,TIM_IT_Update,ENABLE);
+    /* TIM2触发输出模式选择  */
+	TIM_ITConfig(TIM2,TIM_IT_Update,ENABLE);
 	TIM_Cmd(TIM2, ENABLE);  	//使能TIMx外设
 }
 
 /*****************************************************************
-* Function Name : TIM2_IRQHandler
+* Function Name : TIM2_IRQHandlerv 5us 进一次
 * Description   : Timer2的中断函数
 * Input         : None
 * Output        : None
@@ -382,28 +351,11 @@ void Timer2Init(void)      //Timer2,控制采样率
 ******************************************************************/	
 void TIM2_IRQHandler(void)
 {
-//	static u8 Test_ON = 0;
-//	static u8 Test_NUM = 0;
-//	static u16 m_time_cnt = 0;
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
 	{
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-		Check_Read_Voice_Data();	
-		
-//		if(Test_ON == 1) //音频测试
-//		{
-//			Test_ON = 0;
-//	//		Test_NUM++;
-//	//		if(Test_NUM >3)
-//	//			Test_NUM =1;
-//			PlayVoice(8);
-//		}
 
-//		if(++m_time_cnt >= 1000)
-//		{
-//			Test_ON = 1;
-//			m_time_cnt = 0;
-//		}
+        IicProcess(); //IIC 进程
 	}
 }
 

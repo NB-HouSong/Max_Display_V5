@@ -16,6 +16,7 @@ u8 succeed;
 extern u8 VALUE;
 
 volatile u8 NFC_INT = 0;
+
 NFC_SET NFC_set;
 NFC_CARD_STRUCT  _my_id =
 {
@@ -115,7 +116,7 @@ unsigned char Command_Execute(command_struct *comm_status)
 
     while(1)
     {
-        GetReg(JREG_COMMIRQ,&irq);
+        GetReg(JREG_COMMIRQ, &irq);
         if(irq & BIT0)//TimerIRq = 1
         {
             SetReg(JREG_COMMIRQ,BIT0);//Clear COMMIRQ BIT0
@@ -796,8 +797,8 @@ void Lpcd_Set_Mode(unsigned char mode)
 }
 void Lpcd_Set_IRQ_pin(void)
 {
-    SetReg(JREG_COMMIEN,BIT7);//IRQ引脚反相输出
-    SetReg(JREG_DIVIEN,BIT7);//IRQ引脚CMOS输出模式（IRQ引脚不需要外接上拉电阻）
+    SetReg(JREG_COMMIEN, BIT7);//IRQ引脚反相输出
+    SetReg(JREG_DIVIEN, BIT7);//IRQ引脚CMOS输出模式（IRQ引脚不需要外接上拉电阻）
 }
 //***********************************************
 //函数名称：Lpcd_Get_IRQ()
@@ -1191,6 +1192,7 @@ void Lpcd_Calibration_Restore(void)
     //Uart_Send_Msg("-> Restore Success!\r\n");
     return;
 }
+
 void Lpcd_Calibration_Backup(void)//
 {
     Lpcd.Calibration_Backup.Reference = Lpcd.Calibration.Reference;
@@ -1249,92 +1251,13 @@ void RE_LPCD_CALIBRATION(void)
 //    Lpcd_Set_Mode(1); //LPCD  IN
 }
 
-//void check_NFC_key(u8 type)
-//{
-//    static u8 i,s_check_cnt=0;
-//#ifdef CHECK_NFC_KEY
-//    if(type==0x01)
-//    {
-//        for(i=0; i<4; i++) //  ??
-//        {
-//            if(PICC_A.UID[i]!=ID1[i])
-//                break;
-//            if(i==3)
-//                g_NBCmdMap[NB_INF_POWER_ON_CNT]++;
-//        }
-//        for(i=0; i<8; i++) //??
-//        {
-//            if(PICC_A.UID[i]!=ID2[i])
-//                break;
-//            if(i==7)
-//                g_NBCmdMap[NB_INF_POWER_ON_CNT]++;
-//        }
-//        for(i=0; i<8; i++) //??3
-//        {
-//            if(PICC_A.UID[i]!=ID8[i])
-//                break;
-//            if(i==7)
-//                g_NBCmdMap[NB_INF_POWER_ON_CNT]++;
-//        }
-//        for(i=0; i<8; i++) //??4
-//        {
-//            if(PICC_A.UID[i]!=ID7[i])
-//                break;
-//            if(i==7)
-//                g_NBCmdMap[NB_INF_POWER_ON_CNT]++;
-//        }
-//    }
-//    if(type==0x02)
-//    {
-//        for(i=0; i<8; i++) //???1
-//        {
-//            if(PICC_B.UID[i]!=ID3[i])
-//                break;
-//            if(i==7)
-//                g_NBCmdMap[NB_INF_POWER_ON_CNT]++;
-//        }
-//        for(i=0; i<8; i++) //???2
-//        {
-//            if(PICC_B.UID[i]!=ID4[i])
-//                break;
-//            if(i==7)
-//                g_NBCmdMap[NB_INF_POWER_ON_CNT]++;
-//        }
-//        for(i=0; i<8; i++) //???2
-//        {
-//            if(PICC_B.UID[i]!=ID5[i])
-//                break;
-//            if(i==7)
-//                g_NBCmdMap[NB_INF_POWER_ON_CNT]++;
-//        }
-//        for(i=0; i<8; i++) //???2
-//        {
-//            if(PICC_B.UID[i]!=ID6[i])
-//                break;
-//            if(i==7)
-//                g_NBCmdMap[NB_INF_POWER_ON_CNT]++;
-//        }
-//    }
-//#endif
-//    //g_NBCmdMap[NB_INF_POWER_ON_CNT]++;
-
-//    if( *_rental_object.status_register != IOT_NORMAL_WORK)
-//    {
-//        if(g_bool[B_ACC_STATE]==0)
-//        {
-//            PowCtrl_PowerON();
-//        }
-//        else
-//        {
-//            PowCtrl_PowerOFF();
-//        }
-//    }
-
-//    memcpy((u8*)&_my_id.s_card_id,PICC_A.UID,4);
-////    _my_id.s_card_id = (*(u32*)PICC_A.UID);
-//    memset((u8*)&PICC_A.UID, 0, 8);
-//    memset((u8*)&PICC_B.UID, 0, 8);
-//}
+void check_NFC_key(u8 type)
+{
+    memcpy((u8*)&_my_id.s_card_id,PICC_A.UID,4);
+    
+    memset((u8*)&PICC_A.UID, 0, 8);
+    memset((u8*)&PICC_B.UID, 0, 8);
+}
 
 
 u8 s_error_cnt;
@@ -1378,6 +1301,10 @@ void LPCD_Read(void)
 //							  PICC_A.Have_get_uid_status = 1;
                 result=TYPE_A_EVENT();
                 //result=FM175XX_SUCCESS;
+                
+                //临时放在这儿
+                check_NFC_key(s_polling_card);	//
+                //end
             }
             if(s_polling_card & BIT1)
             {
@@ -1409,6 +1336,7 @@ void LPCD_Read(void)
 //                {
 //                    check_NFC_key(s_polling_card);	//
 //                }
+                //check_NFC_key(s_polling_card);	//
                 s_NFC_Flage=1;
                 Lpcd_Set_Mode(1);     // IN lpcd
             }

@@ -16,8 +16,8 @@ static uint8_t powerCtrl(u8 status)
 
     gpioSetOutput(GpioOutPowCtrl, status);
     gpioSetOutput(GpioOutGPSPowCtrl, status);
-    gpioSetOutput(GpioOut5VSysPowCtrl, status);
-
+    gpioSetOutput(GpioOut5VSysPowCtrl, true);
+    gpioSetOutput(GpioOutTurnSignalRgbPowCtrl, status);
     return rec;
 }
 
@@ -54,10 +54,6 @@ void Query_Send_Data_Pro(void) //20ms
             PushMiniFrame(MY_ID, ECU_ID, sizeof(HANDLE_BAR_INFO), CMD_SCO_CTL_NR, 0, (u8*)&g_myself_data.Handle_Bar_Info, 0);	
         }
 
-        //TODO:test
-        g_myself_data.Scooter_Info.ControllerStatus = UNLOCK;
-        g_myself_data.CommuTimeout = 0;
-        //TODO:end test
         if(g_myself_data.Scooter_Info.ControllerStatus == LOCK || g_myself_data.CommuTimeout == 1)
         {
             powerCtrl(OFF);//关锁或者通信超时，关闭仪表主电
@@ -101,6 +97,20 @@ void Check_IAP_Mode(void)
 		}
 	}
 	g_bool[B_UPD_IAP] = 0;
+}
+
+void Check_Device_Status(void)
+{
+    g_myself_data.Handle_Bar_Info.WirelessChargerStatus = 0;
+    if(gpioGetOutput(GpioOutWirelessChargePowCtrl) == true)
+    {
+        g_myself_data.Handle_Bar_Info.WirelessChargerStatus |= 0x01; 
+    }
+    if(g_bool[B_WIRELESS_ERR] == 1)
+    {
+        g_myself_data.Handle_Bar_Info.WirelessChargerStatus |= 0x80; 
+    }
+    
 }
 
 //====================================================================================//

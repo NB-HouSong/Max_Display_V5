@@ -198,7 +198,6 @@ void UART3_Int(void)
 ******************************************************************/	
 static void UART3_DmaSend(EUART3_Frame *sendFramePtr)
 {
-    //DMA_ClearFlag(DMA1_FLAG_TC2);
     DMA_Cmd(EUART3_TX_DMA_CH, DISABLE);
 
     EUART3_TX_DMA_CH->CMAR = (uint32_t)sendFramePtr->buf;
@@ -216,7 +215,8 @@ static void UART3_DmaSend(EUART3_Frame *sendFramePtr)
 ******************************************************************/	
 void UART3_PushFrame(u8 src_id, u8 dst_id, u8 DataLen, u8 Cmd, u8 Index, u8*pdata)
 {
-	if(m_bEUART3PushingFrms || m_bEUART3CheckingSend)
+	//if(m_bEUART3PushingFrms || m_bEUART3CheckingSend)
+    if(m_bEUART3PushingFrms)
 		return;
 	m_bEUART3PushingFrms = 1;
 	
@@ -370,59 +370,14 @@ void UART3_CheckSend(void)
 		return;
 	m_bEUART3CheckingSend = 1;
 
-	//判断队列是否为空以及DMA是否空闲
-	if ((EXT_UART3->ISR & USART_FLAG_TXE) == (uint16_t)RESET)	    //上次发送未完成
-	{
-		m_bEUART3CheckingSend = 0;
-		return;
-	}
 	if(m_EUART3_TxFrm_Head == m_EUART3_TxFrm_Tail)					//队列为空
 	{
-		if((EXT_UART3->ISR & USART_FLAG_TC) != (uint16_t)RESET)	 	//发送完毕
-		{
-			if(m_bEUART3TxEn)
-			{
-				m_bEUART3TxEn = 0;
-			}
-		}
 		m_bEUART3CheckingSend = 0;
 		return;
 	}
-	if(!m_bEUART3TxEn)
-	{
-		m_bEUART3TxEn = 1;
-	}
-    
+
     UART3_SetPinToTx();
     UART3_DmaSend(&m_EUART3_TxFrames[m_EUART3_TxFrm_Tail]);
-//    for(int s_count = 0; s_count < m_EUART3_TxFrames[m_EUART3_TxFrm_Tail].len; s_count++)
-//    {
-        //发送一个字节数据
-//        EXT_UART3->TDR = m_EUART3_TxFrames[m_EUART3_TxFrm_Tail].buf[s_count];
-//        while (USART_GetFlagStatus(EXT_UART3, USART_FLAG_TC) == RESET)
-//            ; // Wait for the data to be send completely
-//    }
-//    m_EUART3_TxFrm_Tail++;
-//    if(m_EUART3_TxFrm_Tail == EUART3_TX_FRM_SIZE)
-//        m_EUART3_TxFrm_Tail = 0;
-//    m_EUART3_TxFrm_FreeFrmLen++;
-
-//    m_bEUART3CheckingSend = 0;
-
-//    USART_ClearFlag(EXT_UART3, USART_FLAG_TC);
-//	//发送一个字节数据
-//	EXT_UART3->TDR = m_EUART3_TxFrames[m_EUART3_TxFrm_Tail].buf[s_count];
-
-//	s_count++;
-//	if(s_count >= m_EUART3_TxFrames[m_EUART3_TxFrm_Tail].len)		//一帧数据发送完毕
-//	{
-//		s_count = 0;
-//		m_EUART3_TxFrm_Tail++;
-//		if(m_EUART3_TxFrm_Tail == EUART3_TX_FRM_SIZE)
-//			m_EUART3_TxFrm_Tail = 0;
-//		m_EUART3_TxFrm_FreeFrmLen++;
-//	}
-//	m_bEUART3CheckingSend = 0;
 }		   // */
 
 void DMA1_Channel2_3_IRQHandler(void)
@@ -432,8 +387,8 @@ void DMA1_Channel2_3_IRQHandler(void)
         DMA_ClearFlag(DMA1_FLAG_TC2);
         DMA_ClearITPendingBit(DMA1_IT_GL2);
 
-        while ((EXT_UART3->ISR & USART_FLAG_TC) == (uint16_t)RESET)
-            ; // Wait for the data to be send completely
+//        while ((EXT_UART3->ISR & USART_FLAG_TC) == (uint16_t)RESET)
+//            ; // Wait for the data to be send completely
 
         //置接收
         UART3_SetPinToRx();

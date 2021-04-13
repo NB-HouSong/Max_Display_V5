@@ -107,12 +107,12 @@ static s16 NTC_GET_Temperature(u16 adcValue)
 * Output        : None
 * Notes         :
 ******************************************************************/
-static u16 tttemp = 0;
-
 void Handle_Temp_Ctr(void)
 {
     int16_t leftHandletemp = 0;
     int16_t rightHandletemp = 0;
+    
+//    uint16_t handleFault = 0;
     
     g_myself_data.Handle_Bar_Info.HandleLeftTemp;
     g_myself_data.Handle_Bar_Info.HandleRightTemp;
@@ -122,40 +122,46 @@ void Handle_Temp_Ctr(void)
     
     g_myself_data.Handle_Bar_Info.HandleLeftTemp = NTC_GET_Temperature(leftHandletemp);
     g_myself_data.Handle_Bar_Info.HandleRightTemp = NTC_GET_Temperature(rightHandletemp);
-    
-    //TODO:test
-    Handle_Temp_Set(20);
-    //end test
-    
-    if(ABS(leftHandletemp - rightHandletemp) > 10)
+
+    //左右把套加热硬件好坏先不考虑
+    //认为超过36V标准
+//    if(handleFault > 2450 || handleFault < 1000)
+//    {
+//    
+//    }
+
+    if(ABS(g_myself_data.Handle_Bar_Info.HandleLeftTemp - g_myself_data.Handle_Bar_Info.HandleRightTemp) > 10)
     {
-        //TODO:把套加热有问题
         //关闭把套加热
+        Handle_Temp_Set(0);
+        g_myself_data.Handle_Bar_Info.HandleTempStatus = HANDLE_TEMP_DIFF_LARGE;
     }
     else
     {
-        if( (leftHandletemp + rightHandletemp) / 2 < g_myself_data.Scooter_Info.HandleTempSetValue)
+        if(g_myself_data.Scooter_Info.HandleTempMode == 1)
         {
-            if(g_myself_data.Scooter_Info.HandleTempMode == 1)
+            //小于设定温度使能加热
+            if( ((g_myself_data.Handle_Bar_Info.HandleLeftTemp + g_myself_data.Handle_Bar_Info.HandleRightTemp) / 2) 
+                < g_myself_data.Scooter_Info.HandleTempSetValue)
             {
-                //TODO:使能加热
+                //使能加热
+                Handle_Temp_Set(40);
+                g_myself_data.Handle_Bar_Info.HandleTempStatus = HANDLE_TEMP_ON;
             }
-            else
+            //大于设定温度关闭加热
+            else if( ((g_myself_data.Handle_Bar_Info.HandleLeftTemp + g_myself_data.Handle_Bar_Info.HandleRightTemp) / 2) 
+                      > (g_myself_data.Scooter_Info.HandleTempSetValue + 2) )
             {
                 //关闭加热
+                Handle_Temp_Set(0);
+                g_myself_data.Handle_Bar_Info.HandleTempStatus = HANDLE_TEMP_OFF;
             }
         }
         else
         {
             //关闭加热
+            Handle_Temp_Set(0);
+            g_myself_data.Handle_Bar_Info.HandleTempStatus = HANDLE_TEMP_OFF;
         }
     }
-    
-    //TODO:检测加热把套好坏
-    
-    
-    //TODO: test
-    //Handle_Temp_Set(50);
-    //TODO: end test
-    
 }

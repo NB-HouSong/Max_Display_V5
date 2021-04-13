@@ -156,18 +156,18 @@ void SPI_Write_FIFO(u8 reglen,u8* regbuf)
     u8  i;
     u8 regdata;
 
-    GPIO_ResetBits(PORT_NSS,PIN_NSS);	//NSS = 0;
-    SPI_SendData8(NFC_SPI,0x12);   /* Send FIFO addr 0x09<<1 */
+    GPIO_ResetBits(PORT_NSS, PIN_NSS);	    //NSS = 0;
+    SPI_SendData8(NFC_SPI,0x12);            /* Send FIFO addr 0x09<<1 */
     while(SPI_I2S_GetFlagStatus(NFC_SPI, SPI_I2S_FLAG_RXNE) == RESET);
-    regdata = SPI_ReceiveData8(NFC_SPI);		 /* not care data */
+    regdata = SPI_ReceiveData8(NFC_SPI);    /* not care data */
     for(i = 0; i < reglen; i++)
     {
-        regdata = *(regbuf+i);	  //RegData_i
-        SPI_SendData8(NFC_SPI,regdata);   /* Send addr_i i¡Ý1*/
+        regdata = *(regbuf+i);	            //RegData_i
+        SPI_SendData8(NFC_SPI,regdata);     /* Send addr_i i¡Ý1*/
         while(SPI_I2S_GetFlagStatus(NFC_SPI, SPI_I2S_FLAG_RXNE) == RESET);
-        regdata = SPI_ReceiveData8(NFC_SPI);		 /* not care data */
+        regdata = SPI_ReceiveData8(NFC_SPI);/* not care data */
     }
-    GPIO_SetBits(PORT_NSS,PIN_NSS);	//NSS = 1;
+    GPIO_SetBits(PORT_NSS,PIN_NSS);	        //NSS = 1;
 
     return;
 }
@@ -184,22 +184,22 @@ void SPI_Read_FIFO(u8 reglen,u8* regbuf)
 {
     u8  i;
 
-    GPIO_ResetBits(PORT_NSS,PIN_NSS);	//NSS = 0;
-    SPI_SendData8(NFC_SPI,0x92);   /* Send FIFO addr 0x09<<1|0x80 */
+    GPIO_ResetBits(PORT_NSS, PIN_NSS);	//NSS = 0;
+    SPI_SendData8(NFC_SPI,0x92);        /* Send FIFO addr 0x09<<1|0x80 */
     while(SPI_I2S_GetFlagStatus(NFC_SPI, SPI_I2S_FLAG_RXNE)==RESET);
     *(regbuf) = SPI_ReceiveData8(NFC_SPI);		 /* not care data */
 
     for(i=1; i<reglen; i++)
     {
-        SPI_SendData8(NFC_SPI,0x92);   /* Send FIFO addr 0x09<<1|0x80 */
+        SPI_SendData8(NFC_SPI,0x92);    /* Send FIFO addr 0x09<<1|0x80 */
         while(SPI_I2S_GetFlagStatus(NFC_SPI, SPI_I2S_FLAG_RXNE)==RESET);
         *(regbuf+i-1) = SPI_ReceiveData8(NFC_SPI);  //Data_i-1
     }
-    SPI_SendData8(NFC_SPI,0x00);   /* Send recvEnd data 0x00 */
+    SPI_SendData8(NFC_SPI,0x00);        /* Send recvEnd data 0x00 */
     while(SPI_I2S_GetFlagStatus(NFC_SPI, SPI_I2S_FLAG_RXNE)==RESET);
     *(regbuf+i-1) = SPI_ReceiveData8(NFC_SPI);		 /* Read SPI2 received data */
 
-    GPIO_SetBits(PORT_NSS,PIN_NSS);	//NSS = 1;
+    GPIO_SetBits(PORT_NSS, PIN_NSS);	//NSS = 1;
 
     return;
 }
@@ -258,7 +258,6 @@ void FM175XX_HardReset(void)
 ******************************************************************/
 void GetReg_Ext(unsigned char ExtRegAddr,unsigned char* ExtRegData)
 {
-
     SetReg(JREG_EXT_REG_ENTRANCE,JBIT_EXT_REG_RD_ADDR + ExtRegAddr);
     GetReg(JREG_EXT_REG_ENTRANCE,&(*ExtRegData));
     return;
@@ -273,7 +272,6 @@ void GetReg_Ext(unsigned char ExtRegAddr,unsigned char* ExtRegData)
 ******************************************************************/
 void SetReg_Ext(unsigned char ExtRegAddr,unsigned char ExtRegData)
 {
-
     SetReg(JREG_EXT_REG_ENTRANCE,JBIT_EXT_REG_WR_ADDR + ExtRegAddr);
     SetReg(JREG_EXT_REG_ENTRANCE,JBIT_EXT_REG_WR_DATA + ExtRegData);
     return;

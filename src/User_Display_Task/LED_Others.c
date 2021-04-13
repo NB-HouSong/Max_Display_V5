@@ -25,7 +25,7 @@
 /* Variables -----------------------------------------------------------------*/
 static u16 m_LED_DMABuff[LEDBUFF_LEN] = {0};
 static u8 RGB_brightness = 0xFF*100/100;         //50%亮度
-DIS_COLOR_INFO DIS_Color_Set;
+//DIS_COLOR_INFO DIS_Color_Set;
 /* Private function prototypes -----------------------------------------------*/
 /* Functions -----------------------------------------------------------------*/
 
@@ -223,8 +223,8 @@ void Ambientlight_breath(u8 num, u8 period, u8 color)
 ******************************************************************/ 
 void ALL_RGB_OFF(void)
 {
-	RGB_Bit_Set(RGB_NUM_LEFT_Ambientlight, RGB_OFF, 0x00);
-	RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, RGB_OFF, 0x00);
+//	RGB_Bit_Set(RGB_NUM_LEFT_Ambientlight, RGB_OFF, 0x00);
+//	RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, RGB_OFF, 0x00);
 }
 
 /*****************************************************************
@@ -285,13 +285,6 @@ void Handle_RGB_Control(u8 Flash_flage)  //30ms
     u8 ambientlight = 0;
 	
     ambientlight = g_myself_data.Scooter_Info.AmbientLightMode & 0x0f;      // 操作的是哪个氛围灯
-    
-    //TODO：test
-    ambientlight = 1;
-    g_myself_data.Scooter_Info.AmbientLightMode = 0x10;
-    g_myself_data.Scooter_Info.AmbientLightLux = 100;
-    g_myself_data.Scooter_Info.AmbientLightColor = 0x07;
-    // end test
 
 	switch((g_myself_data.Scooter_Info.AmbientLightMode & 0xf0) >> 4)
 	{
@@ -316,11 +309,6 @@ void Handle_RGB_Control(u8 Flash_flage)  //30ms
 		break;
 	}
 
-    //TODO： test
-    //TIM_SetCompare3(LED_TIM, 20);
-    
-    //TODO: end test
-    
 	LED_DMA_Refresh(); //DMA Buffer数据更新
 }
 

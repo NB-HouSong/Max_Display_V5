@@ -68,48 +68,48 @@ void SPI1_Configuration(void)  //NFC
 	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
 	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
 	SPI_InitStructure.SPI_CRCPolynomial = 7;
-	SPI_Init(SPI1, &SPI_InitStructure);
+	SPI_Init(NFC_SPI, &SPI_InitStructure);
   
-	SPI_RxFIFOThresholdConfig(SPI1, SPI_RxFIFOThreshold_QF);
-	SPI_Cmd(SPI1, ENABLE);
+	SPI_RxFIFOThresholdConfig(NFC_SPI, SPI_RxFIFOThreshold_QF);
+	SPI_Cmd(NFC_SPI, ENABLE);
 }
 
-/*****************************************************************
-* Function Name : SPI_ReadWriteByte
-* Description   : SPI读写一个字节（发送完成后返回本次通讯读取的数据）
-* Input         : TxData 待发送的数 RxData 收到的数
-* Output        : None
-* Notes         :
-******************************************************************/
-u8 SPI_ReadWriteByte(u8 TxData, u8* pRxData, SPI_TypeDef* SPIx)
-{
-	 u16 timeoutcnt = 0;
+///*****************************************************************
+//* Function Name : SPI_ReadWriteByte
+//* Description   : SPI读写一个字节（发送完成后返回本次通讯读取的数据）
+//* Input         : TxData 待发送的数 RxData 收到的数
+//* Output        : None
+//* Notes         :
+//******************************************************************/
+//u8 SPI_ReadWriteByte(u8 TxData, u8* pRxData, SPI_TypeDef* SPIx)
+//{
+//	 u16 timeoutcnt = 0;
 
-	 timeoutcnt = SPI_TIMEOUTCNT;
-	 
-	 while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_TXE) == RESET && timeoutcnt)
-	 {
-		 timeoutcnt--;	 
-	 }
-	 if(!timeoutcnt)
-		return SPI_TIMEOUT;// */
-	 //?h??? 
-	 SPI_SendData8(SPIx, TxData);
-	 timeoutcnt = SPI_TIMEOUTCNT;
-	 while(SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_RXNE) == RESET && timeoutcnt)
-	 {
-		 timeoutcnt--;
-	 }
-	 if(!timeoutcnt)
-		return SPI_TIMEOUT;
-	 //SPI_I2S_ClearFlag(SPI2,SPI_I2S_FLAG_RXNE);
-	 timeoutcnt = SPI_ReceiveData8(SPIx);
-	 if(pRxData != 0)
-	 {
-		 *pRxData = timeoutcnt;
-	 }
-	 return SPI_SUCCESS;
-}
+//	 timeoutcnt = SPI_TIMEOUTCNT;
+//	 
+//	 while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_TXE) == RESET && timeoutcnt)
+//	 {
+//		 timeoutcnt--;	 
+//	 }
+//	 if(!timeoutcnt)
+//		return SPI_TIMEOUT;// */
+//	 //?h??? 
+//	 SPI_SendData8(SPIx, TxData);
+//	 timeoutcnt = SPI_TIMEOUTCNT;
+//	 while(SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_RXNE) == RESET && timeoutcnt)
+//	 {
+//		 timeoutcnt--;
+//	 }
+//	 if(!timeoutcnt)
+//		return SPI_TIMEOUT;
+//	 //SPI_I2S_ClearFlag(SPI2,SPI_I2S_FLAG_RXNE);
+//	 timeoutcnt = SPI_ReceiveData8(SPIx);
+//	 if(pRxData != 0)
+//	 {
+//		 *pRxData = timeoutcnt;
+//	 }
+//	 return SPI_SUCCESS;
+//}
 
 /*****************************************************************
 * Function Name : EXTI_Config
@@ -131,28 +131,12 @@ void EXTI_Config(void)
     GPIO_Init(GPIOD, &GPIO_InitStruct);
 	
 	//NFC刷卡事件
-    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD,EXTI_PinSource2);
+    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD, EXTI_PinSource2);
     EXTI_InitStructure.EXTI_Line = EXTI_Line2; 					    //连接到外部中断2
     EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt; 			//使能中断模式
     EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;		    //电压下降超过阈值时触发中断
     EXTI_InitStructure.EXTI_LineCmd = ENABLE; 						//使能中断
     EXTI_Init(&EXTI_InitStructure);
-	
-//	//充电器插入事件
-//	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC,EXTI_PinSource9);
-//    EXTI_InitStructure.EXTI_Line = EXTI_Line9; 					    //连接到外部中断9
-//    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt; 			//使能中断模式
-//    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;		    //电压下降超过阈值时触发中断
-//    EXTI_InitStructure.EXTI_LineCmd = ENABLE; 						//使能中断
-//    EXTI_Init(&EXTI_InitStructure);
-	
-	//CAN通讯唤醒事件
-//	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOB,EXTI_PinSource8);
-//    EXTI_InitStructure.EXTI_Line = EXTI_Line8; 					//连接到外部中断8
-//    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt; 			//使能中断模式
-//    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;		//电压下降超过阈值时触发中断
-//    EXTI_InitStructure.EXTI_LineCmd = ENABLE; 				    //使能中断
-//    EXTI_Init(&EXTI_InitStructure);
 }
 
 /*****************************************************************
@@ -166,19 +150,19 @@ void EXTI2_3_IRQHandler(void)
 {
     if(EXTI_GetITStatus(EXTI_Line2) != RESET)
     {
-        if(g_bool[B_LOWPOWER_MODE])
-        {
-			g_bool[B_SLEEP_MODE] = 0; //
-            g_bool[B_LOWPOWER_MODE]=0;//退出低功耗模式
-			
-			//初始化时钟
-			SystemCoreClockConfigure();
-			SystemCoreClockUpdate();
-//			SystemInit();
-			//初始化外设
-			InitAllPeripherals();
-        }
-		NFC_INT=1; //刷卡,置位
+//        if(g_bool[B_LOWPOWER_MODE])
+//        {
+//			g_bool[B_SLEEP_MODE] = 0; //
+//            g_bool[B_LOWPOWER_MODE]=0;//退出低功耗模式
+//			
+//			//初始化时钟
+//			SystemCoreClockConfigure();
+//			SystemCoreClockUpdate();
+////			SystemInit();
+//			//初始化外设
+//			InitAllPeripherals();
+//        }
+		NFC_INT = 1; //刷卡,置位
     }
     EXTI_ClearITPendingBit(EXTI_Line2);
 }

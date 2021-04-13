@@ -27,7 +27,7 @@
 
 //把套加热
 #define HANDLE_TIMER            TIM17
-#define HANDLE_TIMER_PERIOD     49
+#define HANDLE_TIMER_PERIOD     99
 
 //ADC相关宏定义
 #define ADC_USE					ADC1
@@ -57,7 +57,7 @@ typedef enum
 } AdcChanel;
 
 //#define ADC_CHANNEL_NUM     	4		
-#define ADC_BUF_LEN		        (AdcChanelMaxNumber * 8)
+#define ADC_BUF_LEN		        (AdcChanelMaxNumber * 4)
 ////对应的模拟量在g_ADC1Value[]中的位置
 //#define ADC_CH_12V_COL		    0
 //#define ADC_CH_Oil		        1

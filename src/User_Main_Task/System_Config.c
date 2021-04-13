@@ -81,8 +81,8 @@ void Peripherals_Clock_Init(FunctionalState NewState)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, NewState);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, NewState);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, NewState);
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, NewState);
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, NewState);
+//	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM14, NewState);
+//	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, NewState);
 //	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, NewState);
 //		RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2,NewState);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3,NewState);
@@ -91,7 +91,7 @@ void Peripherals_Clock_Init(FunctionalState NewState)
 //		RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, NewState);
 //		RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, NewState);		
 	/* Enable the SPI periph */
-//	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, NewState);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, NewState);
 //	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, NewState);
 }
 
@@ -132,16 +132,16 @@ void NVIC_Configuration(void)
 //	NVIC_InitStructure.NVIC_IRQChannelPriority = 4;
 //	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 //	NVIC_Init(&NVIC_InitStructure);
-//	
-//	NVIC_InitStructure.NVIC_IRQChannel = EXTI2_3_IRQn;
-//	NVIC_InitStructure.NVIC_IRQChannelPriority = 3;
-//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//	NVIC_Init(&NVIC_InitStructure);
 	
-//	NVIC_InitStructure.NVIC_IRQChannel =  TIM2_IRQn;
-//    NVIC_InitStructure.NVIC_IRQChannelPriority = 2;
-//    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//    NVIC_Init(&NVIC_InitStructure);
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI2_3_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPriority = 3;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+	
+	NVIC_InitStructure.NVIC_IRQChannel =  TIM2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPriority = 2;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 		
     NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel2_3_IRQn;
     NVIC_Init(&NVIC_InitStructure);
@@ -229,8 +229,11 @@ void InitAllPeripherals( void )
     Handle_Timer_Init();
     RGB_Time_Init();                                //左右转向氛围灯
     Ambient_light_Start(&Ambient_light_object);     //表盘氛围灯
-	//Timer2Init();
-
+	
+    // TM1637 显示初始化
+    Timer2Init();
+    IIC_Init();
+    
     //三色RGB氛围灯
     //TIM3_CH1_2_3();
 	
@@ -245,33 +248,15 @@ void InitAllPeripherals( void )
 
 	ADC_Int();			    //ADC
     gpioInitialize();
-
+    
+    /*NFC 初始化部分*/
     SPI1_Configuration();   //NFC 17550通讯配置		
 	FM175XX_HardReset();
-
-//	GD25Q_SPIFLASH_Init();  //FLASH SPI配置
-//	
-//	Audio_Driver_Init();    //语音相关引脚配置
-	
-//    if(First_in_flage == 0) //只有上电初始化时配置，退出低功耗时不再配置
-//	{		
-////		if(1)
-////		{
-//			if(Lpcd_Calibration_Event()== SUCCESS)
-//				Lpcd_Calibration_Backup();
-//	//		else
-//	//		{
-//	//			SetErrorByte(MINI_NFC_CAL_ERROR);
-//	//		}
-//			Lpcd_Set_Mode(1); //进入LPCD模式
-//		 
-//			EXTI_Config();    //放在外面，否则会产生中断
-////		}
-////		else
-////			SPI_Write_Flash_Test();
-//		
-//		First_in_flage = 1;
-//	}
+    if(Lpcd_Calibration_Event()== SUCCESS)
+        Lpcd_Calibration_Backup();
+    Lpcd_Set_Mode(1);       //进入LPCD模式
+ 
+    EXTI_Config();          //放在外面，否则会产生中断
 }
 
 /*****************************************************************
@@ -394,13 +379,13 @@ void Variables_Init(void)
 //    g_myself_data.NFC_Audio_set.AudioEnableConfig.Audio_ON = 1;               //默认语音打开
 //	g_myself_data.NFC_Audio_set.AudioEnableConfig.Audio_Enable = 0x7FFFFFFF;  //默认所有语音均可播放
 //	g_myself_data.Audio_Set.VolumeLevel = Level_3;        //默认音量最大
-	MC_Running_data.MC_Status.VehicleDrivingMode = 1;
+//	MC_Running_data.MC_Status.VehicleDrivingMode = 1;
 //	g_myself_data.Ambientlight_Ctr.Brightness = Level_3;  //默认氛围灯亮度100%
-	DIS_Color_Set.Vehicle_lock_color = RGB_OFF;           //锁车状态默认氛围灯不亮 
-	DIS_Color_Set.Err_color = RGB_RED;                    //故障状态灯默认红色
-	DIS_Color_Set.Charging_color = RGB_WHITE;             //充电状态灯默认白色
-	DIS_Color_Set.PowerOn_color = RGB_BLUE ;              //开机动画状态灯默认蓝色
-	DIS_Color_Set.Excise_color = RGB_GREEN;               //Excesise无助力模式默认绿色
+//	DIS_Color_Set.Vehicle_lock_color = RGB_OFF;           //锁车状态默认氛围灯不亮 
+//	DIS_Color_Set.Err_color = RGB_RED;                    //故障状态灯默认红色
+//	DIS_Color_Set.Charging_color = RGB_WHITE;             //充电状态灯默认白色
+//	DIS_Color_Set.PowerOn_color = RGB_BLUE ;              //开机动画状态灯默认蓝色
+//	DIS_Color_Set.Excise_color = RGB_GREEN;               //Excesise无助力模式默认绿色
 //	DIS_Color_Set.ECO_color = RGB_BLUE;                   //ECO   1:1助力模式默认关闭
 //	DIS_Color_Set.Turbo_color = RGB_CHING;                //Turbo 2:1助力模式默认关闭
 //	DIS_Color_Set.Electric_color = RGB_YELLOW;            //Electric 纯电力模式默认关闭

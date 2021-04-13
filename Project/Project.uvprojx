@@ -586,11 +586,6 @@
           <GroupName>User_Com_Task</GroupName>
           <Files>
             <File>
-              <FileName>CAN.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\User_Com_Task\CAN.c</FilePath>
-            </File>
-            <File>
               <FileName>ParseFrame.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\User_Com_Task\ParseFrame.c</FilePath>
@@ -604,16 +599,6 @@
               <FileName>UART_3.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\User_Com_Task\UART_3.c</FilePath>
-            </File>
-            <File>
-              <FileName>batmanage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\User_Com_Task\batmanage.c</FilePath>
-            </File>
-            <File>
-              <FileName>UART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\User_Com_Task\UART.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -634,6 +619,11 @@
               <FileName>Ambient_Light_App.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\User_Display_Task\Ambient_Light_App.c</FilePath>
+            </File>
+            <File>
+              <FileName>iic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\User_Display_Task\iic.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -669,31 +659,6 @@
               <FileName>TurnLightProcess.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\User_Control_Task\TurnLightProcess.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>User_Audio_Task</GroupName>
-          <Files>
-            <File>
-              <FileName>Audio_Driver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\User_Audio_Task\Audio_Driver.c</FilePath>
-            </File>
-            <File>
-              <FileName>commu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\User_Audio_Task\commu.c</FilePath>
-            </File>
-            <File>
-              <FileName>decode.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\User_Audio_Task\decode.c</FilePath>
-            </File>
-            <File>
-              <FileName>GD25QXX.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\User_Audio_Task\GD25QXX.c</FilePath>
             </File>
           </Files>
         </Group>
