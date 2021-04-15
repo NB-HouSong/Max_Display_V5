@@ -123,6 +123,12 @@ void Handle_Temp_Ctr(void)
     g_myself_data.Handle_Bar_Info.HandleLeftTemp = NTC_GET_Temperature(leftHandletemp);
     g_myself_data.Handle_Bar_Info.HandleRightTemp = NTC_GET_Temperature(rightHandletemp);
 
+
+#ifdef DEBUG_1
+    g_myself_data.Scooter_Info.HandleTempSetValue = 30;
+    g_myself_data.Scooter_Info.HandleTempMode = 1;
+#endif
+    
     //左右把套加热硬件好坏先不考虑
     //认为超过36V标准
 //    if(handleFault > 2450 || handleFault < 1000)
@@ -130,11 +136,25 @@ void Handle_Temp_Ctr(void)
 //    
 //    }
 
+    g_myself_data.Handle_Bar_Info.HandleTempStatus = HANDLE_TEMP_OFF;
+    
     if(ABS(g_myself_data.Handle_Bar_Info.HandleLeftTemp - g_myself_data.Handle_Bar_Info.HandleRightTemp) > 10)
     {
         //关闭把套加热
         Handle_Temp_Set(0);
-        g_myself_data.Handle_Bar_Info.HandleTempStatus = HANDLE_TEMP_DIFF_LARGE;
+        g_myself_data.Handle_Bar_Info.HandleTempStatus |= HANDLE_TEMP_DIFF_LARGE;
+    }
+    else if(g_myself_data.Handle_Bar_Info.HandleLeftTemp > 70 || g_myself_data.Handle_Bar_Info.HandleLeftTemp < -30)
+    {
+        //关闭加热
+        Handle_Temp_Set(0);
+        g_myself_data.Handle_Bar_Info.HandleTempStatus |= HANDLE_TEMP_LEFT_BROKN;
+    }
+    else if(g_myself_data.Handle_Bar_Info.HandleRightTemp > 70 || g_myself_data.Handle_Bar_Info.HandleRightTemp < -30)
+    {
+        //关闭加热
+        Handle_Temp_Set(0);
+        g_myself_data.Handle_Bar_Info.HandleTempStatus |= HANDLE_TEMP_RIGHT_BROKN;
     }
     else
     {
@@ -146,7 +166,7 @@ void Handle_Temp_Ctr(void)
             {
                 //使能加热
                 Handle_Temp_Set(40);
-                g_myself_data.Handle_Bar_Info.HandleTempStatus = HANDLE_TEMP_ON;
+                g_bool[B_HANDLE_TEMP_STATUS] = ON;
             }
             //大于设定温度关闭加热
             else if( ((g_myself_data.Handle_Bar_Info.HandleLeftTemp + g_myself_data.Handle_Bar_Info.HandleRightTemp) / 2) 
@@ -154,14 +174,23 @@ void Handle_Temp_Ctr(void)
             {
                 //关闭加热
                 Handle_Temp_Set(0);
-                g_myself_data.Handle_Bar_Info.HandleTempStatus = HANDLE_TEMP_OFF;
+                g_bool[B_HANDLE_TEMP_STATUS] = OFF;
             }
         }
         else
         {
             //关闭加热
             Handle_Temp_Set(0);
-            g_myself_data.Handle_Bar_Info.HandleTempStatus = HANDLE_TEMP_OFF;
+            g_bool[B_HANDLE_TEMP_STATUS] = OFF;
+        }
+        
+        if(g_bool[B_HANDLE_TEMP_STATUS] == ON)
+        {
+            g_myself_data.Handle_Bar_Info.HandleTempStatus |= HANDLE_TEMP_ON;
+        }
+        else
+        {
+            g_myself_data.Handle_Bar_Info.HandleTempStatus &= ~HANDLE_TEMP_ON;
         }
     }
 }

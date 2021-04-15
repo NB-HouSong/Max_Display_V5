@@ -20,8 +20,8 @@
 #define LED_PIN  		        GPIO_Pin_10
 
 //1812输出通道（RGB编号）相关宏定义
-#define RGB_NUM_LEFT_Ambientlight    1  //左转向氛围灯
-#define RGB_NUM_RIGHT_Ambientlight   2  //右转向氛围灯
+#define RGB_NUM_RGB           1  //左右转向氛围灯连接到一起
+//#define RGB_NUM_RIGHT_RGB   2  //右转向氛围灯
 
 //刹车彩灯相关宏定义
 #define RGB_OFF       			0  //关闭

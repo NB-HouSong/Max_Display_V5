@@ -19,7 +19,7 @@ typedef enum
     GpioOut5VSysPowCtrl,            // 5V电源控制引脚
     
     GpioOutPowCtrl,                 // 主电源控制引脚
-    GpioOutFrountLedCtrl,           // 前灯控制引脚
+    GpioOutFrontLedCtrl,            // 前灯控制引脚
     GpioOutWirelessChargePowCtrl,   // 无线充电源控制引脚
     GpioOutGPSPowCtrl,              // Gps电源控制引脚
     

@@ -14,7 +14,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* Variables -----------------------------------------------------------------*/
-static const u8 check_code[16] __attribute__((at(0x8001100)))="Ebike_Booter_60k";
+static const u8 check_code[16] __attribute__((at(0x8001100)))="VOIV5_Booter_60k";
 
 u32 g_FCtrlMap[FCTRL_MAP_LEN>>2] = {0};  		//内存控制表
 u32 g_FCtrlMap_Default[FCTRL_MAP_LEN>>2] =

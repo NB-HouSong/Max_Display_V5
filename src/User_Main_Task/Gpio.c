@@ -25,8 +25,8 @@ static GpioPin gpioPin[GpioMaxNumber] =
     {false, GPIOC, {GPIO_Pin_9,  GPIO_Mode_OUT, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_NOPULL}},       // GpioOutBeep
     
     //Input
-    {false, GPIOC, {GPIO_Pin_14, GPIO_Mode_IN, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_NOPULL}},        // GpioVsersionA
-    {false, GPIOC, {GPIO_Pin_14, GPIO_Mode_IN, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_NOPULL}},        // GpioVsersionB
+    {false, GPIOC, {GPIO_Pin_14, GPIO_Mode_IN, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_UP}},             // GpioVsersionA
+    {false, GPIOC, {GPIO_Pin_14, GPIO_Mode_IN, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_UP}},             // GpioVsersionB
     {false, GPIOF, {GPIO_Pin_0,  GPIO_Mode_IN, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_NOPULL}},        // GpioInLeftButton
     {false, GPIOF, {GPIO_Pin_1,  GPIO_Mode_IN, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_NOPULL}},        // GpioInRightButton
     

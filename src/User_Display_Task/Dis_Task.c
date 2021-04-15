@@ -40,13 +40,6 @@ u8 Dis_4LED(u8 mode) //30ms
         return 0;
     }
 
-    //TODO: test
-    g_myself_data.Scooter_Info.A_LED = 1;
-    g_myself_data.Scooter_Info.B_LED = 2;
-    g_myself_data.Scooter_Info.D_LED = 3;
-    g_myself_data.Scooter_Info.C_LED = 4;
-    //end TODO: test
-    
     memcpy((u8*)led_on_buf,(u8*)&g_myself_data.Scooter_Info.A_LED, 4);
     
     /**
@@ -116,16 +109,9 @@ u8 Dis_4LED(u8 mode) //30ms
     {
         rightBroknCnt = 0;
     }
-    
-    //TODO£∫test
-//    led_on_buf[4] = 0x08;
-//    led_on_buf[5] = 0x08;
-    //end test
 
     IIC_PushFrame(led_on_buf);			//ÀÕœ‘
-    
-    //TM1637_Set_tab( led_on_buf, 7);
-    
+
     return flash_flage;
 }
 
@@ -141,7 +127,7 @@ static u8 Init_Show_Process(void )
 	static u8 s_timer_cn = 0;
 	s_timer_cn++;
 
-	if(s_timer_cn < 199) //2s
+	if(s_timer_cn < 49) //0.5
 	{
 		Dis_4LED(1);
 
@@ -199,11 +185,24 @@ void Display_Task(void *pvParameters)
 //			break;
 //		}
 
-        //TODO :TEST
-        g_myself_data.Scooter_Info.AmbientLightMode = CHANGLIANG_LED;
-        g_myself_data.Scooter_Info.AmbientLightColor = 4;
-        g_myself_data.Scooter_Info.AmbientLightLux = 100;
-        //END TODO :TEST
+//        //TODO :TEST
+//        g_myself_data.Ambient_Light.AmbientLightMode = BREATHE_LED;
+//        Ambient_light_object.running_color = 7;
+//        //g_myself_data.Ambient_Light.AmbientLightColor = 7;
+//        g_myself_data.Ambient_Light.AmbientLightLux = 100;
+//        //END TODO :TEST
+
+#ifdef DEBUG_1
+        g_myself_data.Ambient_Light.AmbientLightMode = BREATHE_LED;
+        Ambient_light_object.running_color = 7;
+        g_myself_data.Ambient_Light.AmbientLightLux = 100;
+        
+        g_myself_data.Scooter_Info.A_LED = 1;
+        g_myself_data.Scooter_Info.B_LED = 1;
+        g_myself_data.Scooter_Info.C_LED = 1;
+        g_myself_data.Scooter_Info.D_LED = 1;
+        
+#endif
 
         if(dis_init == 0)
         {
@@ -215,7 +214,6 @@ void Display_Task(void *pvParameters)
         Ambient_Light_Set();                        //∑’Œßµ∆øÿ÷∆
 
 		Check_IAP_Mode();
-        Check_Device_Status();
 		vTaskDelay(20);
 	}
 }

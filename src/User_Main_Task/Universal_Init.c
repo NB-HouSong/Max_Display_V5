@@ -9,6 +9,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "Universal_Init.h"
 
+#define HALL_GND_BROKEN_OFFSET (u16)1000  //刹把油门地线断开 偏差
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -306,14 +308,62 @@ u16 ADC_Get_ConversionValue(u8 Channel)
 #define EBS_AD_TSD	 175					//EBS霍尔AD采样的最大值  理论值40~210
 void Get_RealVaule(void)
 {
+    static u8 leftBreakCnt = 0, rightBreakCnt = 0, accCnt = 0;
     g_myself_data.Handle_Bar_Info.GasValue = (ADC_Get_ConversionValue(AdcChanelAcc) >> 4) > 15 ? (ADC_Get_ConversionValue(AdcChanelAcc) >> 4) - 15 : 0;
     g_myself_data.Handle_Bar_Info.LeftBreakValue = (ADC_Get_ConversionValue(AdcChanelLeftBreak) >> 4) > 15 ? (ADC_Get_ConversionValue(AdcChanelLeftBreak) >> 4) - 15 : 0; 
     g_myself_data.Handle_Bar_Info.RightBreakValue = (ADC_Get_ConversionValue(AdcChanelRightBreak) >> 4) > 15 ? (ADC_Get_ConversionValue(AdcChanelRightBreak) >> 4) - 15 : 0 ;
 
+    //最小和最大值有点偏差
     g_myself_data.Handle_Bar_Info.LeftBreakValue = (g_myself_data.Handle_Bar_Info.LeftBreakValue *909 + 7056 + 500)/1000;
     g_myself_data.Handle_Bar_Info.RightBreakValue = (g_myself_data.Handle_Bar_Info.RightBreakValue *909 + 7056 + 500)/1000;
     
     g_wireless_charger_vol = ADC_Get_ConversionValue(AdcChanelWirelessChargVoltage) * 330 / 4095;
+    
+//    //获取刹车地线电压
+//    g_leftBreakGnd_vol = ADC_Get_ConversionValue(AdcChanelWirelessChargVoltage);    //左刹地线检测
+//    if( g_leftBreakGnd_vol < HALL_GND_BROKEN_OFFSET)
+//    {
+//        if(++leftBreakCnt > 5)
+//        {
+//            leftBreakCnt = 10;
+//            //左刹Hall地线断开
+//            g_myself_data.Handle_Bar_Info.LeftBreakValue = 0;
+//        }
+//    }
+//    else
+//    {
+//        leftBreakCnt = 0;
+//    }
+//    
+//    g_rightBreakGnd_vol = ADC_Get_ConversionValue(AdcChanelWirelessChargVoltage);   //右刹地线检测
+//    if(g_rightBreakGnd_vol < HALL_GND_BROKEN_OFFSET)
+//    {
+//        if(++rightBreakCnt > 5)
+//        {
+//            rightBreakCnt = 10;
+//            //右刹Hall地线断开
+//            g_myself_data.Handle_Bar_Info.RightBreakValue = 0;
+//        }
+//    }
+//    else
+//    {
+//        rightBreakCnt = 0;
+//    }
+
+//    g_accGnd_vol = ADC_Get_ConversionValue(AdcChanelWirelessChargVoltage);          //acc 地线电压检测
+//    if(g_accGnd_vol < HALL_GND_BROKEN_OFFSET)
+//    {
+//        if(++accCnt > 5)
+//        {
+//            accCnt = 10;
+//            //油门Hall地线断开
+//            g_myself_data.Handle_Bar_Info.GasValue = 0;
+//        }
+//    }
+//    else
+//    {
+//        accCnt = 0;
+//    }
 }
 
 /*****************************************************************

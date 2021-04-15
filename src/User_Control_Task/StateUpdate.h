@@ -34,7 +34,6 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 void Check_IAP_Mode(void);
-void Check_Device_Status(void);
 void Query_Send_Data_Pro(void);
 
 #endif

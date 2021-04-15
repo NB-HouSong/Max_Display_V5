@@ -22,6 +22,15 @@ void turnLightProcess(void)
 
     static LIGHT_STATE lightState = LIGHT_STATE_IDLE;
 
+#ifdef DEBUG_1
+    g_myself_data.Scooter_Info.ControllerStatus = UNLOCK;
+    g_myself_data.CommuTimeout = 0;
+    gpioSetOutput(GpioOutRightLightCtrl, true);
+    gpioSetOutput(GpioOutLeftLightCtrl, true);
+    return;
+#endif
+
+    
     //ÅÐ¶Ï³µÁ¾×´Ì¬ºÍÍ¨ÐÅ×´Ì¬
     if(g_myself_data.Scooter_Info.ControllerStatus == UNLOCK && g_myself_data.CommuTimeout == 0)
     {

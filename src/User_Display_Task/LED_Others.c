@@ -17,7 +17,7 @@
 #define	LED_CCR_RESET  	    0			//Reset对应的占空比
 
 #define LED_DMA_Channel		DMA1_Channel5
-#define RGB_NUM             2
+#define RGB_NUM             1
 #define LED_NUM             RGB_NUM * 3			//12 * 4 = 48位  
 #define	LEDBUFF_LEN         (LED_NUM * 8 + 20)	//每个out口对应8位的寄存器
 
@@ -122,7 +122,7 @@ void RGB_Time_Init(void)
 	//PWM输出使能
 	TIM_CtrlPWMOutputs(LED_TIM, ENABLE);
     
-    DMA_ITConfig(LED_DMA_Channel, DMA_IT_TC, ENABLE);							        //DMA传输完成中断
+    //DMA_ITConfig(LED_DMA_Channel, DMA_IT_TC, ENABLE);							        //DMA传输完成中断
 }
 
 /*****************************************************************
@@ -148,7 +148,7 @@ void LED_DMA_Refresh()
 /*****************************************************************
 * Function Name : RGB_Bit_Set
 * Description   : 24bit数据更新(每次更新1个RGB的24个位)
-* Input         : num:RGB编号 1~4 1:状态灯 2:蓝牙 3:网络 4:定位
+* Input         : num:RGB编号 1~2 1:左把转向灯 2:右把转向灯
                 :color:要显示的颜色0~7
                 : brightness:显示亮度0~0xFF
 * Output        : None
@@ -191,13 +191,13 @@ void Ambientlight_breath(u8 num, u8 period, u8 color)
 	static u8 brightness = 0;
 	static u8 s_dir = 0;
 	
-	brightness = s_cnt*0xFF/(period*1000/30);
+	brightness = s_cnt*0xFF/(period*1000/20);
 	if(s_dir == 0)
 	{
 		s_cnt++;
-		if(s_cnt > period*1000/30)  //periods呼吸
+		if(s_cnt > period*1000/20)  //periods呼吸
 		{
-			s_cnt = period*1000/30;
+			s_cnt = period*1000/20;
 			s_dir = 1;
 		}
 	}
@@ -223,8 +223,8 @@ void Ambientlight_breath(u8 num, u8 period, u8 color)
 ******************************************************************/ 
 void ALL_RGB_OFF(void)
 {
-//	RGB_Bit_Set(RGB_NUM_LEFT_Ambientlight, RGB_OFF, 0x00);
-//	RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, RGB_OFF, 0x00);
+	RGB_Bit_Set(RGB_NUM_RGB, RGB_OFF, 0x00);
+	//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, RGB_OFF, 0x00);
 }
 
 /*****************************************************************
@@ -239,35 +239,28 @@ void PowerON_RGB(void)
 	static u8 s_cnt = 0;
 	s_cnt++;
 	
-	if(s_cnt < 25) //500ms
+	if(s_cnt < 2) //500ms
 	{
-		RGB_Bit_Set(RGB_NUM_LEFT_Ambientlight, 1/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-		RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 1/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+		RGB_Bit_Set(RGB_NUM_RGB, 1/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+		//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 1/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+	}
+	else if(s_cnt < 5) 
+	{
+		RGB_Bit_Set(RGB_NUM_RGB, 2/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+		//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 2/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
 		
 	}
-	else if(s_cnt < 50) 
+	else if(s_cnt < 7) 
 	{
-		RGB_Bit_Set(RGB_NUM_LEFT_Ambientlight, 2/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-		RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 2/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-		
-	}
-	else if(s_cnt < 75) 
-	{
-		RGB_Bit_Set(RGB_NUM_LEFT_Ambientlight, 4/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-		RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 4/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-		
+		RGB_Bit_Set(RGB_NUM_RGB, 4/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+		//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 4/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
 	}
 	else
 	{
-		s_cnt = 75;
-		RGB_Bit_Set(RGB_NUM_LEFT_Ambientlight, 8/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-		RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 8/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-		
+		s_cnt = 7;
+		RGB_Bit_Set(RGB_NUM_RGB, 8/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+		//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 8/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
 	}
-	
-//	RGB_Bit_Set(RGB_NUM_LEFT_Ambientlight, RGB_OFF, 0x00);  //左把氛围灯关闭
-//    RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, RGB_OFF, 0x00); //右把氛围灯关闭
-
 	LED_DMA_Refresh();
 }
 
@@ -282,28 +275,32 @@ void PowerON_RGB(void)
 void Handle_RGB_Control(u8 Flash_flage)  //30ms
 {
     u8 s_brightness = 0;
-    u8 ambientlight = 0;
 	
-    ambientlight = g_myself_data.Scooter_Info.AmbientLightMode & 0x0f;      // 操作的是哪个氛围灯
+#ifdef DEBUG_1
+        g_myself_data.RGB_Led.AmbientLightMode = BREATHE_LED;
+        g_myself_data.RGB_Led.AmbientLightColor = 7;
+        g_myself_data.RGB_Led.AmbientLightLux = 100;
+        g_myself_data.RGB_Led.AmbientLight_Period  = 2;
+#endif
 
-	switch((g_myself_data.Scooter_Info.AmbientLightMode & 0xf0) >> 4)
+	switch(g_myself_data.RGB_Led.AmbientLightMode)
 	{
-	case 0:  //氛围灯关闭（服务器不控制点亮氛围灯）
-
+	case STOP_LED:          //氛围灯关闭
+        RGB_Bit_Set(RGB_NUM_RGB, RGB_OFF, 0x00);
 		break;
-	case 1:  //常亮
-		s_brightness = g_myself_data.Scooter_Info.AmbientLightLux *0xFF / 100;
-		RGB_Bit_Set(ambientlight, g_myself_data.Scooter_Info.AmbientLightColor, s_brightness);
+	case CHANGLIANG_LED:    //常亮
+		s_brightness = g_myself_data.RGB_Led.AmbientLightLux * 0xFF / 100;
+		RGB_Bit_Set(RGB_NUM_RGB, g_myself_data.RGB_Led.AmbientLightColor, s_brightness);
 		break;
-	case 2:  //闪烁
-		s_brightness = g_myself_data.Scooter_Info.AmbientLightLux * 0xFF / 100;
-		if(Flash_flage)
-		  RGB_Bit_Set(ambientlight, g_myself_data.Scooter_Info.AmbientLightColor, s_brightness);
-		else
-		  RGB_Bit_Set(ambientlight, RGB_OFF, 0x00);
-		break;
-	case 3:  //呼吸 
-		Ambientlight_breath(ambientlight, 2, g_myself_data.Scooter_Info.AmbientLightColor); //呼吸周期3s,4各RGB全呼吸
+//	case 2:  //闪烁
+//		s_brightness = g_myself_data.RGB_Led.AmbientLightLux * 0xFF / 100;
+//		if(Flash_flage)
+//		  RGB_Bit_Set(ambientlight, g_myself_data.RGB_Led.AmbientLightColor, s_brightness);
+//		else
+//		  RGB_Bit_Set(ambientlight, RGB_OFF, 0x00);
+//		break;
+	case BREATHE_LED:       //呼吸 
+		Ambientlight_breath(RGB_NUM_RGB, g_myself_data.RGB_Led.AmbientLight_Period , g_myself_data.RGB_Led.AmbientLightColor);
 		break;
 	default:
 		break;
@@ -312,16 +309,14 @@ void Handle_RGB_Control(u8 Flash_flage)  //30ms
 	LED_DMA_Refresh(); //DMA Buffer数据更新
 }
 
-
-
-void DMA1_Channel4_5_6_7_IRQHandler(void)
-{
-    if (DMA_GetITStatus(DMA1_IT_TC5))
-    {
-        DMA_ClearFlag(DMA1_FLAG_TC5);
-        DMA_ClearITPendingBit(DMA1_IT_GL5);
-    }
-}
+//void DMA1_Channel4_5_6_7_IRQHandler(void)
+//{
+//    if (DMA_GetITStatus(DMA1_IT_TC5))
+//    {
+//        DMA_ClearFlag(DMA1_FLAG_TC5);
+//        DMA_ClearITPendingBit(DMA1_IT_GL5);
+//    }
+//}
 //===================================================================================//
 
 //==================================== The End===============================================/

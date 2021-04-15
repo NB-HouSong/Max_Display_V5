@@ -140,9 +140,9 @@ void Ambient_Light_ALL_Pro(_AMBIENT_LIGHT_OB *p_this)
 
 void Ambient_Light_Changliang(_AMBIENT_LIGHT_OB *p_this)
 {
-    p_this->control_data.s_bled_value = ((g_myself_data.Scooter_Info.AmbientLightColor&0x04)>>2) * p_this->control_data.s_light_freq * g_myself_data.Scooter_Info.AmbientLightLux/100;
-    p_this->control_data.s_rled_value = ((g_myself_data.Scooter_Info.AmbientLightColor&0x02 )>>1)* p_this->control_data.s_light_freq * g_myself_data.Scooter_Info.AmbientLightLux/100;
-    p_this->control_data.s_gled_value = (g_myself_data.Scooter_Info.AmbientLightColor&0x01)* p_this->control_data.s_light_freq * g_myself_data.Scooter_Info.AmbientLightLux/100;
+    p_this->control_data.s_bled_value = ((g_myself_data.Ambient_Light.AmbientLightColor&0x04)>>2) * p_this->control_data.s_light_freq * g_myself_data.Ambient_Light.AmbientLightLux/100;
+    p_this->control_data.s_rled_value = ((g_myself_data.Ambient_Light.AmbientLightColor&0x02 )>>1)* p_this->control_data.s_light_freq * g_myself_data.Ambient_Light.AmbientLightLux/100;
+    p_this->control_data.s_gled_value = (g_myself_data.Ambient_Light.AmbientLightColor&0x01)* p_this->control_data.s_light_freq * g_myself_data.Ambient_Light.AmbientLightLux/100;
 }
 
 void Ambient_ClearColor(_AMBIENT_LIGHT_OB *p_this)
@@ -162,7 +162,7 @@ void Ambient_Timer_Cmp_Update(_AMBIENT_LIGHT_OB *p_this)
 void Ambient_Light_Set(void)
 {
     // 程序现在30mS运行一次，时间可能需要调整
-    switch(g_myself_data.Scooter_Info.AmbientLightMode)
+    switch(g_myself_data.Ambient_Light.AmbientLightMode & 0x0f)
     {
     case STOP_LED://停止
         Ambient_ClearColor(&Ambient_light_object);
@@ -183,7 +183,6 @@ void Ambient_Light_Set(void)
         break;
     }
     Ambient_Timer_Cmp_Update(&Ambient_light_object);
-
 }
 
 /**@brief    ambient light process init
@@ -201,8 +200,8 @@ void Ambient_Light_Malloc_Init(_AMBIENT_LIGHT_OB *p_this )
     p_this->running_cnt = 5;
     p_this->control_data.s_light_freq = Ambient_TIMER_PERIOD / 4;
     p_this->running_mode = STOP_LED;//STOP_LED, CHANGLIANG_LED,BREATHE_LED
-    p_this->running_color = g_myself_data.Scooter_Info.AmbientLightColor = 7;  // Amblient Clolor 1.蓝 2. 绿 3.青 4.红 5.? 6.? 7. ?
-    p_this->running_lux = g_myself_data.Scooter_Info.AmbientLightLux = 100;
+    p_this->running_color = g_myself_data.Ambient_Light.AmbientLightColor = 7;  // Amblient Clolor 1.蓝 2. 绿 3.青 4.红 5.? 6.? 7. ?
+    p_this->running_lux = g_myself_data.Ambient_Light.AmbientLightLux = 100;
     p_this->running_period = 5;
 
     p_this->ambient_light_device_init = Ambient_Timer_Init;

@@ -14,10 +14,22 @@ static uint8_t powerCtrl(u8 status)
 {
     uint8_t rec = 0;
 
-    gpioSetOutput(GpioOutPowCtrl, status);
-    gpioSetOutput(GpioOutGPSPowCtrl, status);
+    //因为在关锁的时候，需要开氛围灯，GPS供电等功能，所以主电要一直打开
+    gpioSetOutput(GpioOutPowCtrl, true);
+    
+    if(g_myself_data.Scooter_Info.GpsPowerSet == ON)
+    {
+        gpioSetOutput(GpioOutGPSPowCtrl, true);
+    }
+    else
+    {
+        gpioSetOutput(GpioOutGPSPowCtrl, false);
+    }
+    
     gpioSetOutput(GpioOut5VSysPowCtrl, true);
-    gpioSetOutput(GpioOutTurnSignalRgbPowCtrl, status);
+    
+    gpioSetOutput(GpioOutTurnSignalRgbPowCtrl, true);
+
     return rec;
 }
 
@@ -53,7 +65,7 @@ void Query_Send_Data_Pro(void) //20ms
             //发送油门数据
             PushMiniFrame(MY_ID, ECU_ID, sizeof(HANDLE_BAR_INFO), CMD_SCO_CTL_NR, 0, (u8*)&g_myself_data.Handle_Bar_Info, 0);	
         }
-
+#ifndef DEBUG_1
         if(g_myself_data.Scooter_Info.ControllerStatus == LOCK || g_myself_data.CommuTimeout == 1)
         {
             powerCtrl(OFF);//关锁或者通信超时，关闭仪表主电
@@ -62,6 +74,7 @@ void Query_Send_Data_Pro(void) //20ms
         {
             powerCtrl(ON);//打开设备主电
         }
+#endif
 	}
     else
     {
@@ -69,6 +82,11 @@ void Query_Send_Data_Pro(void) //20ms
 
         powerCtrl(OFF);//升级过程关闭外设电源
     }
+    
+#ifdef DEBUG_1
+    powerCtrl(ON);//打开设备主电
+    return;
+#endif
 }
 
 /*****************************************************************
@@ -97,20 +115,6 @@ void Check_IAP_Mode(void)
 		}
 	}
 	g_bool[B_UPD_IAP] = 0;
-}
-
-void Check_Device_Status(void)
-{
-    g_myself_data.Handle_Bar_Info.WirelessChargerStatus = 0;
-    if(gpioGetOutput(GpioOutWirelessChargePowCtrl) == true)
-    {
-        g_myself_data.Handle_Bar_Info.WirelessChargerStatus |= 0x01; 
-    }
-    if(g_bool[B_WIRELESS_ERR] == 1)
-    {
-        g_myself_data.Handle_Bar_Info.WirelessChargerStatus |= 0x80; 
-    }
-    
 }
 
 //====================================================================================//

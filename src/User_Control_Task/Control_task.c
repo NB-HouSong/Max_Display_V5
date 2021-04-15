@@ -57,6 +57,11 @@ void Wireless_Power_Ctr_Handler(void)
 	static u8 Wireless_Charge_Vol_Offset = 30;  //无线充电压最大偏移量3V
 	static u16 s_cnt = 0;
 
+#ifdef DEBUG_1
+    g_myself_data.Scooter_Info.WirelessChargerSet = ON;
+#endif
+    g_myself_data.Handle_Bar_Info.WirelessChargerStatus = WIRELESS_STATUS_OFF;
+    
 	//无线充故障检测
 	if(Last_input_state == 1 && gpioGetInput(GpioInWirelessFB) == 0)
 	{
@@ -71,6 +76,7 @@ void Wireless_Power_Ctr_Handler(void)
 			if(Pulse_num >= 3)
 			{
 				g_bool[B_WIRELESS_ERR] = 1;
+                g_myself_data.Handle_Bar_Info.WirelessChargerStatus |= WIRELESS_STATUS_ERROR;
 			}
 			Time_cnt = 0;
 			Pulse_num = 0;
@@ -103,6 +109,7 @@ void Wireless_Power_Ctr_Handler(void)
 		 {
 			 gpioSetOutput(GpioOutWirelessChargePowCtrl, true); //打开电源
 			 s_cnt++;
+             g_myself_data.Handle_Bar_Info.WirelessChargerStatus |= WIRELESS_STATUS_ON;
 		 }
 	}
     
@@ -113,11 +120,9 @@ void Wireless_Power_Ctr_Handler(void)
 		if(ABS(g_wireless_charger_vol - Wireless_Charge_Vol_TSD) > Wireless_Charge_Vol_Offset)
         {
             gpioSetOutput(GpioOutWirelessChargePowCtrl, false); //关闭电源
+            g_myself_data.Handle_Bar_Info.WirelessChargerStatus |= WIRELESS_STATUS_DIFF_VOL;
         }
 	}
-//    
-//	if(g_bool[B_SLEEP_MODE] == 1)
-//		s_cnt = 0;
 }
 
 /*****************************************************************
@@ -129,8 +134,19 @@ void Wireless_Power_Ctr_Handler(void)
 ******************************************************************/
 static void NFC_Card_ID_Pro(void)
 {
+//    static u8 timeOut = 0, sendFlag = 0;
+//    
+//    if(++timeOut > 150)       // 150 * 20 = 1000
+//    {
+//        timeOut = 200;
+//        sendFlag = 0;
+//    }
+//    
     if(PICC_A.Have_get_uid_status)
     {
+//        sendFlag = 1;
+//        timeOut = 0;
+//        
 		PICC_A.Have_get_uid_status =0;
         _my_id.s_upload_timeout = 5;
         PushMiniFrame(MY_ID, ECU_ID, _my_id.s_card_id_len, CMD_NFC_UPDATE, 0, (u8*)&_my_id.s_card_id, COM_SCOOTER); 
@@ -223,6 +239,30 @@ void Beep_Ctrl_Pro(void)
 
 
 /*****************************************************************
+* Function Name : HeadLedProcess
+* Description   : 前灯控制
+* Input         : None
+* Output        : None
+* Notes         :
+******************************************************************/
+void FrontLightProcess(void)
+{
+#ifdef DEBUG_1
+    gpioSetOutput(GpioOutFrontLedCtrl, true);
+    return;
+#endif
+    if(g_myself_data.Scooter_Info.FrontlightBrightness == 0)
+    {
+        gpioSetOutput(GpioOutFrontLedCtrl, false);
+    }
+    else
+    {
+        gpioSetOutput(GpioOutFrontLedCtrl, true);
+    }
+}
+
+
+/*****************************************************************
 * Function Name : NFC_Card_ID_Pro
 * Description   : 上传NFC卡号
 * Input         : None
@@ -231,7 +271,7 @@ void Beep_Ctrl_Pro(void)
 ******************************************************************/
 
 /**@brief Time slice distribution*/
-#define NORM_TASK_NUM  9
+#define NORM_TASK_NUM  10
 static TASK_COMPONENTS TaskComps[] =
 {
 	{0, 20, 20,  Query_Send_Data_Pro},      //仪表主动发送数据：油门刹车、查询、NFC解锁锁车数据 周期20ms
@@ -245,6 +285,7 @@ static TASK_COMPONENTS TaskComps[] =
 	{0, 5, 5,    Beep_Ctrl_Pro},            //蜂鸣器控制函数
     
     {0, 5, 5,    turnLightProcess},         //转向灯进程
+    {0, 50, 50,  FrontLightProcess},           //大灯控制
 };
 
 /*****************************************************************

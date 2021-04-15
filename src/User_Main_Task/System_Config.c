@@ -125,9 +125,7 @@ void NVIC_Configuration(void)
 //	NVIC_InitStructure.NVIC_IRQChannelPriority = 1;
 //	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 //	NVIC_Init(&NVIC_InitStructure);
-    
-    
-	
+
 //	NVIC_InitStructure.NVIC_IRQChannel = EXTI4_15_IRQn;
 //	NVIC_InitStructure.NVIC_IRQChannelPriority = 4;
 //	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -146,10 +144,9 @@ void NVIC_Configuration(void)
     NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel2_3_IRQn;
     NVIC_Init(&NVIC_InitStructure);
     
-    NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel4_5_6_7_IRQn;
-    NVIC_Init(&NVIC_InitStructure);
-    
-    
+//    NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel4_5_6_7_IRQn;
+//    NVIC_Init(&NVIC_InitStructure);
+
 	/* Enable RTC_IRQn */
 //	NVIC_InitStructure.NVIC_IRQChannel = RTC_IRQn;
 //	NVIC_InitStructure.NVIC_IRQChannelPriority = 5;
@@ -157,51 +154,45 @@ void NVIC_Configuration(void)
 //	NVIC_Init(&NVIC_InitStructure);
 }
 
-/*****************************************************************
-* Function Name : POWER_CTR_IO_INIT
-* Description   : 电源模块开关控制引脚初始化
-* Input         : None
-* Output        : 
-* Notes         :
-******************************************************************/
-void POWER_CTR_IO_INIT(void)
-{
-    GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;       //大灯、尾灯、语音、锁的电源控制脚
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;       //无线充、显示、氛围灯的电源控制脚
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(GPIOC, &GPIO_InitStructure);	
-	
-//    GPIO_InitStructure.GPIO_Pin = CAPTURE_PIN;      //无线充故障输入引脚
+///*****************************************************************
+//* Function Name : POWER_CTR_IO_INIT
+//* Description   : 电源模块开关控制引脚初始化
+//* Input         : None
+//* Output        : 
+//* Notes         :
+//******************************************************************/
+//void POWER_CTR_IO_INIT(void)
+//{
+//    GPIO_InitTypeDef GPIO_InitStructure;
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;       //大灯、尾灯、语音、锁的电源控制脚
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+//    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+//    GPIO_Init(GPIOB, &GPIO_InitStructure);
+//	
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;       //无线充、显示、氛围灯的电源控制脚
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+//    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+//    GPIO_Init(GPIOC, &GPIO_InitStructure);	
+//	
+//	GPIO_InitStructure.GPIO_Pin = CHARGER_IN_PIN;   //充电器插入检测引脚
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+//    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+//    GPIO_Init(CHARGER_IN_GPIO, &GPIO_InitStructure);
+//	
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;   //硬件版本检测引脚
 //    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
 //    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 //    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//    GPIO_Init(CAPTURE_GPIO, &GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = CHARGER_IN_PIN;   //充电器插入检测引脚
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(CHARGER_IN_GPIO, &GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;   //硬件版本检测引脚
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(GPIOC, &GPIO_InitStructure);
-	
-	g_myself_data.DIS_Version_hw.Dis_HardwareVersion = (GPIOC->IDR >> 13) & 0x0007;	//获取硬件版本号
-}
+//    GPIO_Init(GPIOC, &GPIO_InitStructure);
+//	
+//	g_myself_data.DIS_Version_hw.Dis_HardwareVersion = (GPIOC->IDR >> 13) & 0x0007;	//获取硬件版本号
+//}
 
 /*****************************************************************
 * Function Name : InitAllPeripherals
@@ -234,18 +225,8 @@ void InitAllPeripherals( void )
     Timer2Init();
     IIC_Init();
     
-    //三色RGB氛围灯
-    //TIM3_CH1_2_3();
-	
-//	if(g_bool[B_LOWPOWER_MODE] == 0) //
-//		User_CAN_Init();    //CAN初始化
-	
+    //主控通信初始化
 	UART3_Int();            //串口初始化 单双工主控通信
-    
-    //IIC 初始化            //串口初始化 TM1637发送
-    //IIC_Init();
-	//UART_Int();             //串口初始化 TM1652发送
-
 	ADC_Int();			    //ADC
     gpioInitialize();
     
@@ -259,74 +240,74 @@ void InitAllPeripherals( void )
     EXTI_Config();          //放在外面，否则会产生中断
 }
 
-/*****************************************************************
-* Function Name : LOwpower_IO_Init
-* Description   : 低功耗引脚及外设初始化
-* Input         : None
-* Output        : 
-* Notes         :
-******************************************************************/
-void LOwpower_IO_Init(void)
-{
-	GPIO_InitTypeDef  GPIO_InitStructure;
-	
-	//低功耗关闭ADC
-	ADC_StopOfConversion(ADC_USE);
-	ADC_DMACmd(ADC_USE,DISABLE);
-	DMA_Cmd(ADC_DMA_CH, DISABLE);
-	ADC_Cmd(ADC_USE, DISABLE);
-	ADC_DeInit(ADC_USE);
-	
-	//低功耗关闭CAN
-	CAN_DeInit(CAN);
-	
-	//低功耗关闭串口
-	USART_DMACmd(EXT_UART3, USART_DMAReq_Rx, DISABLE);
-	DMA_Cmd(EUART3_RX_DMA_CH, DISABLE);
-	USART_Cmd(EXT_UART3, DISABLE);
-	USART_DeInit(EXT_UART3);
-	
-	//低功耗关闭定时器
-	TIM_Cmd(TIM1, DISABLE);
-	TIM_Cmd(TIM2, DISABLE);
-	TIM_Cmd(TIM3, DISABLE);
-	TIM_Cmd(TIM6, DISABLE);
+///*****************************************************************
+//* Function Name : LOwpower_IO_Init
+//* Description   : 低功耗引脚及外设初始化
+//* Input         : None
+//* Output        : 
+//* Notes         :
+//******************************************************************/
+//void LOwpower_IO_Init(void)
+//{
+//	GPIO_InitTypeDef  GPIO_InitStructure;
+//	
+//	//低功耗关闭ADC
+//	ADC_StopOfConversion(ADC_USE);
+//	ADC_DMACmd(ADC_USE,DISABLE);
+//	DMA_Cmd(ADC_DMA_CH, DISABLE);
+//	ADC_Cmd(ADC_USE, DISABLE);
+//	ADC_DeInit(ADC_USE);
+//	
+//	//低功耗关闭CAN
+//	CAN_DeInit(CAN);
+//	
+//	//低功耗关闭串口
+//	USART_DMACmd(EXT_UART3, USART_DMAReq_Rx, DISABLE);
+//	DMA_Cmd(EUART3_RX_DMA_CH, DISABLE);
+//	USART_Cmd(EXT_UART3, DISABLE);
+//	USART_DeInit(EXT_UART3);
+//	
+//	//低功耗关闭定时器
+//	TIM_Cmd(TIM1, DISABLE);
+//	TIM_Cmd(TIM2, DISABLE);
+//	TIM_Cmd(TIM3, DISABLE);
+//	TIM_Cmd(TIM6, DISABLE);
 
-	//上拉输入
-	GPIO_StructInit(&GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		//50M时钟速度
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;  //刹车1 刹车2
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;              //串口3 Rx
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-	//浮空输入
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		//50M时钟速度
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_4 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_11 | GPIO_Pin_12;  //数码管显示控制引脚
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_8 | GPIO_Pin_9;  //CAN RX TX
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;  //语音flash控制引脚
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;  //
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
-	
-	//关闭外设时钟
-	Peripherals_Clock_Init(DISABLE);
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, DISABLE);
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, DISABLE);
-}
+//	//上拉输入
+//	GPIO_StructInit(&GPIO_InitStructure);
+//	
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		//50M时钟速度
+//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+//	
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;  //刹车1 刹车2
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//	
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;              //串口3 Rx
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
+//	
+//	//浮空输入
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		//50M时钟速度
+//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+//	
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_4 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_11 | GPIO_Pin_12;  //数码管显示控制引脚
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//	
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_8 | GPIO_Pin_9;  //CAN RX TX
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
+//	
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;  //语音flash控制引脚
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
+//	
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;  //
+//	GPIO_Init(GPIOC, &GPIO_InitStructure);
+//	
+//	//关闭外设时钟
+//	Peripherals_Clock_Init(DISABLE);
+//	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, DISABLE);
+//	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, DISABLE);
+//}
 
 /*****************************************************************
 * Function Name : ReadUniqueID
@@ -352,7 +333,6 @@ void ReadUniqueID(void)
 ******************************************************************/
 void Variables_Init(void)
 {
-//	char defaultsPN[15] = "K8000000000000";
     //布尔变量
 	memset((u8*)g_bool, 0, B_LEN);
 	
@@ -360,40 +340,17 @@ void Variables_Init(void)
 	memcpy((u8*)&g_myself_data.QRCode_Info.Virtual_QRcode_L, (u8*)&g_NBCmdMap[0], 16);
 	memcpy((u8*)&g_myself_data.DIS_PN, (u8*)&g_NBCmdMap[NB_DIS_PN], 14);
 
-//	if(!memcmp(defaultsPN,(u8*)&g_NBCmdMap[NB_DIS_PN],14))//相同
-//    {
-//		SetErrorByte(MINI_ERROR_CODE_INIT_PN, MySelf_Err);
-//    }
-	
 	//读取芯片ID
 	ReadUniqueID();	
   
-    g_myself_data.DIS_Version_sw.Dis_SoftwareVersion = FW_VERSION;	
-	
-//	g_myself_data.Frontlight_Ctr.LightCtrl = LED_ON;   //默认大灯常亮
-//	g_myself_data.Frontlight_Ctr.Brightness = Level_3; //默认3级亮度 最亮
-	
+    g_myself_data.DIS_Version_sw.Dis_SoftwareVersion = FW_VERSION;
+    
+    //g_myself_data.Handle_Bar_Info.HW_Version = ( (gpioGetInput(GpioVsersionB) << 1) | gpioGetInput(GpioVsersionA) );//默认V5仪表硬件版本为3，兼容 0x01双刹
+    g_myself_data.Handle_Bar_Info.HW_Version = 3;       //默认V5仪表硬件版本为3，兼容 0x01双刹
+
 	NFC_set.NFC_CLA_STATE = 0;      //默认天线校准状态为0
 	NFC_set.SET_NFC_CALIBRATE = 0;  //默认无天线校准指令
-	
-//    g_myself_data.NFC_Audio_set.AudioEnableConfig.Audio_ON = 1;               //默认语音打开
-//	g_myself_data.NFC_Audio_set.AudioEnableConfig.Audio_Enable = 0x7FFFFFFF;  //默认所有语音均可播放
-//	g_myself_data.Audio_Set.VolumeLevel = Level_3;        //默认音量最大
-//	MC_Running_data.MC_Status.VehicleDrivingMode = 1;
-//	g_myself_data.Ambientlight_Ctr.Brightness = Level_3;  //默认氛围灯亮度100%
-//	DIS_Color_Set.Vehicle_lock_color = RGB_OFF;           //锁车状态默认氛围灯不亮 
-//	DIS_Color_Set.Err_color = RGB_RED;                    //故障状态灯默认红色
-//	DIS_Color_Set.Charging_color = RGB_WHITE;             //充电状态灯默认白色
-//	DIS_Color_Set.PowerOn_color = RGB_BLUE ;              //开机动画状态灯默认蓝色
-//	DIS_Color_Set.Excise_color = RGB_GREEN;               //Excesise无助力模式默认绿色
-//	DIS_Color_Set.ECO_color = RGB_BLUE;                   //ECO   1:1助力模式默认关闭
-//	DIS_Color_Set.Turbo_color = RGB_CHING;                //Turbo 2:1助力模式默认关闭
-//	DIS_Color_Set.Electric_color = RGB_YELLOW;            //Electric 纯电力模式默认关闭
-//	g_myself_data.BMS_Data.BMSVolt = 3700;
-//	g_myself_data.BMS_Data.BMSSoc = 80;
-//	g_myself_data.Wirelesscharger_Set.PowerCtrl = 1;      //默认无线充打开
-//	memset(battery_object.s_identify_array,0x02,8);
-	
+
     Ambient_Light_Malloc_Init(&Ambient_light_object);
 }
 
@@ -435,36 +392,6 @@ void SetErrorByte(u8 ErrorByte)
         g_ErrorByte = ErrorByte;
     }
 }
-
-///*****************************************************************
-//* Function Name : ClearErrorByte
-//* Description   : 清除故障码 
-//* Input         : None
-//* Output        : 
-//* Notes         :
-//******************************************************************/
-//void ClearErrorByteFromCAN(void) //清外部故障码
-//{
-//	static u16 Clear_error_cnt_max = 0;
-//	if(g_ErrorByte == 1 || g_ErrorByte >= 0xE0)
-//		Clear_error_cnt_max = 6000; 
-//	else 
-//		Clear_error_cnt_max = 1000;
-//	
-//	if(g_Clear_error_cnt < Clear_error_cnt_max) //有故障，计数清零;否则1s后清故障
-//		g_Clear_error_cnt++;
-//	else
-//	{
-//		g_Clear_error_cnt = Clear_error_cnt_max;
-//		g_ErrorByte = 0;
-//	}
-//	
-////	if(g_bool[B_IN_IAPMODE] == 1)
-////	{
-////		g_Clear_error_cnt = Clear_error_cnt_max;
-////		g_ErrorByte = 0;
-////	}
-//}
 
 void ClearErrorByte(u8 ErrorByte)  //直接清自身故障码
 {
