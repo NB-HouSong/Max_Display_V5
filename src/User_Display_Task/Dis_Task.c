@@ -211,7 +211,7 @@ void Display_Task(void *pvParameters)
 
         flash_flage = Dis_4LED(0);                  //数码管显示
         Handle_RGB_Control(flash_flage);            //RGB灯控制
-        Ambient_Light_Set();                        //氛围灯控制
+        //Ambient_Light_Set();                        //氛围灯控制
 
 		Check_IAP_Mode();
 		vTaskDelay(20);

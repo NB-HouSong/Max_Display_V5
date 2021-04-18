@@ -41,7 +41,7 @@ void ALL_RGB_OFF(void);
 void Handle_RGB_Control(u8 Flash_flage);
 
 void RGB_Time_Init(void);
-void Ambientlight_breath(u8 num, u8 period, u8 color);
+u8 Ambientlight_breath(u8 num, u8 period, u8 color);
 
 #endif
 

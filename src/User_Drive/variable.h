@@ -47,9 +47,9 @@
 
 //固件版本号
 //不带把套加热版本
-#define FW_VERSION			    (u16)(0x110)
+//#define FW_VERSION			    (u16)(0x110)
 //带把套加热版本
-//#define FW_VERSION			    (u16)(0x101)
+#define FW_VERSION			    (u16)(0x110)
 
 //各模块ID相关宏定义
 

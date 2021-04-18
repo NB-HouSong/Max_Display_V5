@@ -57,6 +57,7 @@ extern _AMBIENT_LIGHT_OB  Ambient_light_object;
 void Ambient_Light_Malloc_Init(_AMBIENT_LIGHT_OB *p_this );
 void Ambient_light_Start(_AMBIENT_LIGHT_OB *p_this );
 void Ambient_Light_Set(void);
+void Ambient_Set_RGB_Value(_AMBIENT_LIGHT_OB *p_this, u8 brightness);
 void Ambient_Light_Breathe_Pro(_AMBIENT_LIGHT_OB *p_this);
 
 void Ambient_ClearColor(_AMBIENT_LIGHT_OB *p_this);

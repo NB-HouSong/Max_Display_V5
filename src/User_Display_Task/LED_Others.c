@@ -140,7 +140,7 @@ void LED_DMA_Refresh()
 * Function Name : RGB_Bit_Set
 * Description   : 24bit数据更新(每次更新1个RGB的24个位)
 * Input         : num:RGB编号 1~2 1:左把转向灯 2:右把转向灯
-                :color:要显示的颜色0~7
+                : color:要显示的颜色0~7
                 : brightness:显示亮度0~0xFF
 * Output        : None
 * Notes         :
@@ -176,7 +176,7 @@ void RGB_Bit_Set(u8 num, u8 color, u8 brightness)
 * Output        : None
 * Notes         :
 ******************************************************************/ 
-void Ambientlight_breath(u8 num, u8 period, u8 color)
+u8 Ambientlight_breath(u8 num, u8 period, u8 color)
 {
 	static u16 s_cnt = 0;
 	static u8 brightness = 0;
@@ -204,10 +204,7 @@ void Ambientlight_breath(u8 num, u8 period, u8 color)
 	
 	RGB_Bit_Set(num, color, brightness);
     
-    //TODO: 更新氛围灯
-    Ambient_light_object.control_data.s_rled_value = ((Ambient_light_object.running_color & 0x02)>>1) * Ambient_light_object.control_data.s_light_freq * brightness;
-    Ambient_light_object.control_data.s_gled_value = ((Ambient_light_object.running_color & 0x01)) * Ambient_light_object.control_data.s_light_freq * brightness;
-    Ambient_light_object.control_data.s_bled_value = ((Ambient_light_object.running_color & 0x04)>>2) * Ambient_light_object.control_data.s_light_freq * brightness;
+    return brightness;
 }
 
 /*****************************************************************
@@ -220,7 +217,6 @@ void Ambientlight_breath(u8 num, u8 period, u8 color)
 void ALL_RGB_OFF(void)
 {
 	RGB_Bit_Set(RGB_NUM_RGB, RGB_OFF, 0x00);
-	//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, RGB_OFF, 0x00);
 }
 
 /*****************************************************************
@@ -289,7 +285,9 @@ void Handle_RGB_Control(u8 Flash_flage)  //30ms
 	case CHANGLIANG_LED:    //常亮
 		s_brightness = g_myself_data.RGB_Led.AmbientLightLux * 0xFF / 100;
 		RGB_Bit_Set(RGB_NUM_RGB, g_myself_data.RGB_Led.AmbientLightColor, s_brightness);
-        Ambient_Light_Changliang(&Ambient_light_object);
+        
+        //TODO:设置仪表氛围灯常亮
+        Ambient_Set_RGB_Value(&Ambient_light_object, s_brightness);
 		break;
 //	case 2:  //闪烁
 //		s_brightness = g_myself_data.RGB_Led.AmbientLightLux * 0xFF / 100;
@@ -298,9 +296,10 @@ void Handle_RGB_Control(u8 Flash_flage)  //30ms
 //		else
 //		  RGB_Bit_Set(ambientlight, RGB_OFF, 0x00);
 //		break;
-        // TODO:设置仪表氛围灯
 	case BREATHE_LED:       //呼吸 
-		Ambientlight_breath(RGB_NUM_RGB, g_myself_data.RGB_Led.AmbientLight_Period , g_myself_data.RGB_Led.AmbientLightColor);
+		s_brightness = Ambientlight_breath(RGB_NUM_RGB, g_myself_data.RGB_Led.AmbientLight_Period , g_myself_data.RGB_Led.AmbientLightColor);
+        //TODO:设置仪表氛围灯
+        Ambient_Set_RGB_Value(&Ambient_light_object, s_brightness);
 		break;
 	default:
 		break;
