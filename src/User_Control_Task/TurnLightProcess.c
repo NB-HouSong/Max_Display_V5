@@ -23,6 +23,9 @@ void turnLightProcess(void)
     static LIGHT_STATE lightState = LIGHT_STATE_IDLE;
 
 #ifdef DEBUG_1
+    u16 leftTemp = ADC_Get_ConversionValue(AdcChanelLeftLightOverCur);
+    u16 rightTemp = ADC_Get_ConversionValue(AdcChanelRightLightOverCur);
+    
     g_myself_data.Scooter_Info.ControllerStatus = UNLOCK;
     g_myself_data.CommuTimeout = 0;
     gpioSetOutput(GpioOutRightLightCtrl, true);
@@ -30,7 +33,6 @@ void turnLightProcess(void)
     return;
 #endif
 
-    
     //ÅÐ¶Ï³µÁ¾×´Ì¬ºÍÍ¨ÐÅ×´Ì¬
     if(g_myself_data.Scooter_Info.ControllerStatus == UNLOCK && g_myself_data.CommuTimeout == 0)
     {

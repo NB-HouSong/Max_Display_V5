@@ -65,28 +65,12 @@ void Query_Send_Data_Pro(void) //20ms
             //发送油门数据
             PushMiniFrame(MY_ID, ECU_ID, sizeof(HANDLE_BAR_INFO), CMD_SCO_CTL_NR, 0, (u8*)&g_myself_data.Handle_Bar_Info, 0);	
         }
-#ifndef DEBUG_1
-        if(g_myself_data.Scooter_Info.ControllerStatus == LOCK || g_myself_data.CommuTimeout == 1)
-        {
-            powerCtrl(OFF);//关锁或者通信超时，关闭仪表主电
-        }
-        else
-        {
-            powerCtrl(ON);//打开设备主电
-        }
-#endif
 	}
     else
     {
         send100MsCnt = 100;
-
         powerCtrl(OFF);//升级过程关闭外设电源
     }
-    
-#ifdef DEBUG_1
-    powerCtrl(ON);//打开设备主电
-    return;
-#endif
 }
 
 /*****************************************************************
@@ -115,6 +99,33 @@ void Check_IAP_Mode(void)
 		}
 	}
 	g_bool[B_UPD_IAP] = 0;
+}
+
+/*****************************************************************
+* Function Name : MasterPowerCtrl
+* Description   : 仪表主电控制，根据车辆状态进行控制
+* Input         : None
+* Output        : None
+* Notes         :
+******************************************************************/
+void MasterPowerCtrl(void)
+{
+#ifdef DEBUG_1
+    powerCtrl(ON);//打开设备主电
+    return;
+#endif
+    if(!g_bool[B_IN_IAPMODE])
+    {
+        if(g_myself_data.Scooter_Info.ControllerStatus == LOCK || g_myself_data.CommuTimeout == 1)
+        {
+            powerCtrl(OFF);//关锁或者通信超时，关闭仪表主电
+        }
+        else
+        {
+            powerCtrl(ON);//打开设备主电
+        }
+
+    }
 }
 
 //====================================================================================//

@@ -136,8 +136,15 @@ void Handle_Temp_Ctr(void)
 //    
 //    }
 
+
     g_myself_data.Handle_Bar_Info.HandleTempStatus = HANDLE_TEMP_OFF;
     
+    if( FW_VERSION >= 0x110)
+    {
+        //先根据软件版本判断是否安装了把套加热 > 0x0110，说明没有把套加热
+        return;
+    }
+
     if(ABS(g_myself_data.Handle_Bar_Info.HandleLeftTemp - g_myself_data.Handle_Bar_Info.HandleRightTemp) > 10)
     {
         //关闭把套加热

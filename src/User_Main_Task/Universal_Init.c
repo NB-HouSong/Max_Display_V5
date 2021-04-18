@@ -280,7 +280,7 @@ void ADC_Int(void)
 
 /*****************************************************************
 * Function Name : ADC_Get_ConversionValue
-* Description   : 8次采样的平均值
+* Description   : 4次采样的平均值
 * Input         : Channel：采样通道
 * Output        : None
 * Notes         :

@@ -134,19 +134,8 @@ void Wireless_Power_Ctr_Handler(void)
 ******************************************************************/
 static void NFC_Card_ID_Pro(void)
 {
-//    static u8 timeOut = 0, sendFlag = 0;
-//    
-//    if(++timeOut > 150)       // 150 * 20 = 1000
-//    {
-//        timeOut = 200;
-//        sendFlag = 0;
-//    }
-//    
     if(PICC_A.Have_get_uid_status)
     {
-//        sendFlag = 1;
-//        timeOut = 0;
-//        
 		PICC_A.Have_get_uid_status =0;
         _my_id.s_upload_timeout = 5;
         PushMiniFrame(MY_ID, ECU_ID, _my_id.s_card_id_len, CMD_NFC_UPDATE, 0, (u8*)&_my_id.s_card_id, COM_SCOOTER); 
@@ -271,7 +260,7 @@ void FrontLightProcess(void)
 ******************************************************************/
 
 /**@brief Time slice distribution*/
-#define NORM_TASK_NUM  10
+#define NORM_TASK_NUM  11
 static TASK_COMPONENTS TaskComps[] =
 {
 	{0, 20, 20,  Query_Send_Data_Pro},      //仪表主动发送数据：油门刹车、查询、NFC解锁锁车数据 周期20ms
@@ -286,6 +275,7 @@ static TASK_COMPONENTS TaskComps[] =
     
     {0, 5, 5,    turnLightProcess},         //转向灯进程
     {0, 50, 50,  FrontLightProcess},           //大灯控制
+    {0, 20, 20,  MasterPowerCtrl},
 };
 
 /*****************************************************************

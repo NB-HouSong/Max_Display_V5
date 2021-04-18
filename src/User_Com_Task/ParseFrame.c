@@ -119,9 +119,10 @@ void ParseFrame(uint8_t Channel, uint8_t* pData)
                 {
                     g_myself_data.RGB_Led.AmbientLightColor     = LIMIT(g_myself_data.Scooter_Info.AmbientLightColor, 1, 7);
                     g_myself_data.RGB_Led.AmbientLightLux       = LIMIT(g_myself_data.Scooter_Info.AmbientLightLux, 5, 99);
-                    g_myself_data.RGB_Led.AmbientLight_Period   = (g_myself_data.Scooter_Info.AmbientLight_Period & 0x0F) * 1000 / 
-                                                                  ( g_myself_data.Scooter_Info.AmbientLightLux - g_myself_data.Scooter_Info.AmbientLight_Off_Intens) / 5;
-                    g_myself_data.RGB_Led.AmbientLightMode      = g_myself_data.Scooter_Info.AmbientLightMode & 0xf0;
+                    g_myself_data.RGB_Led.AmbientLight_Period   = 2;
+//                    g_myself_data.RGB_Led.AmbientLight_Period   = (g_myself_data.Scooter_Info.AmbientLight_Period & 0x0F) * 1000 / 
+//                                                                  ( g_myself_data.Scooter_Info.AmbientLightLux - g_myself_data.Scooter_Info.AmbientLight_Off_Intens) / 5;
+                    g_myself_data.RGB_Led.AmbientLightMode      = g_myself_data.Scooter_Info.AmbientLightMode & 0x0f;
                 }
                 break;
             case CMD_IAP_BEGIN:

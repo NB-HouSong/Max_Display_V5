@@ -35,6 +35,7 @@
 /* Exported functions ------------------------------------------------------- */
 void Check_IAP_Mode(void);
 void Query_Send_Data_Pro(void);
+void MasterPowerCtrl(void);
 
 #endif
 

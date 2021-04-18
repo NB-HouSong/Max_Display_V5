@@ -1,13 +1,6 @@
-/******************** (C) COPYRIGHT 2020 Ninebot *******************************
-* File Name     : LED_Others.c
-* Author        : meihua
-* Version       : V1.0.0
-* Date          : 2020-11-13
-* Description   : 
-********************************************************************************/
-
 /* Includes ------------------------------------------------------------------*/
 #include "LED_Others.h"
+#include "Ambient_Light_App.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -121,8 +114,6 @@ void RGB_Time_Init(void)
 	TIM_Cmd(LED_TIM, ENABLE);
 	//PWM输出使能
 	TIM_CtrlPWMOutputs(LED_TIM, ENABLE);
-    
-    //DMA_ITConfig(LED_DMA_Channel, DMA_IT_TC, ENABLE);							        //DMA传输完成中断
 }
 
 /*****************************************************************
@@ -180,7 +171,7 @@ void RGB_Bit_Set(u8 num, u8 color, u8 brightness)
 
 /*****************************************************************
 * Function Name : Ambientlight_breath
-* Description   : 氛围灯呼吸（调用周期30ms）
+* Description   : 氛围灯呼吸（调用周期20ms）
 * Input         : period:呼吸一次的时间s color：颜色
 * Output        : None
 * Notes         :
@@ -212,6 +203,11 @@ void Ambientlight_breath(u8 num, u8 period, u8 color)
 	}
 	
 	RGB_Bit_Set(num, color, brightness);
+    
+    //TODO: 更新氛围灯
+    Ambient_light_object.control_data.s_rled_value = ((Ambient_light_object.running_color & 0x02)>>1) * Ambient_light_object.control_data.s_light_freq * brightness;
+    Ambient_light_object.control_data.s_gled_value = ((Ambient_light_object.running_color & 0x01)) * Ambient_light_object.control_data.s_light_freq * brightness;
+    Ambient_light_object.control_data.s_bled_value = ((Ambient_light_object.running_color & 0x04)>>2) * Ambient_light_object.control_data.s_light_freq * brightness;
 }
 
 /*****************************************************************
@@ -264,7 +260,6 @@ void PowerON_RGB(void)
 	LED_DMA_Refresh();
 }
 
-
 /*****************************************************************
 * Function Name : Handle_RGB_Control
 * Description   : 氛围灯控制
@@ -287,10 +282,14 @@ void Handle_RGB_Control(u8 Flash_flage)  //30ms
 	{
 	case STOP_LED:          //氛围灯关闭
         RGB_Bit_Set(RGB_NUM_RGB, RGB_OFF, 0x00);
+    
+        // TODO:设置仪表氛围灯
+        Ambient_ClearColor(&Ambient_light_object);
 		break;
 	case CHANGLIANG_LED:    //常亮
 		s_brightness = g_myself_data.RGB_Led.AmbientLightLux * 0xFF / 100;
 		RGB_Bit_Set(RGB_NUM_RGB, g_myself_data.RGB_Led.AmbientLightColor, s_brightness);
+        Ambient_Light_Changliang(&Ambient_light_object);
 		break;
 //	case 2:  //闪烁
 //		s_brightness = g_myself_data.RGB_Led.AmbientLightLux * 0xFF / 100;
@@ -299,6 +298,7 @@ void Handle_RGB_Control(u8 Flash_flage)  //30ms
 //		else
 //		  RGB_Bit_Set(ambientlight, RGB_OFF, 0x00);
 //		break;
+        // TODO:设置仪表氛围灯
 	case BREATHE_LED:       //呼吸 
 		Ambientlight_breath(RGB_NUM_RGB, g_myself_data.RGB_Led.AmbientLight_Period , g_myself_data.RGB_Led.AmbientLightColor);
 		break;
@@ -307,16 +307,11 @@ void Handle_RGB_Control(u8 Flash_flage)  //30ms
 	}
 
 	LED_DMA_Refresh(); //DMA Buffer数据更新
+    
+    //更新仪表氛围灯
+    Ambient_Timer_Cmp_Update(&Ambient_light_object);
 }
 
-//void DMA1_Channel4_5_6_7_IRQHandler(void)
-//{
-//    if (DMA_GetITStatus(DMA1_IT_TC5))
-//    {
-//        DMA_ClearFlag(DMA1_FLAG_TC5);
-//        DMA_ClearITPendingBit(DMA1_IT_GL5);
-//    }
-//}
 //===================================================================================//
 
 //==================================== The End===============================================/

@@ -32,7 +32,7 @@
 #define AVG(x,y) (((x)+(y))/2)
 #define LIMIT(a, l, h)	(a > h ? h : (a < l ? l : a))
 
-#define DEBUG_1
+//#define DEBUG_1
 
 #define B_FLASH_CATCH           0x7FFF
 #define B_FLASH_MAX_WR_CNT      6000
@@ -46,7 +46,10 @@
 #define NB_INF_FLASH_CNT_RECORD NB_CMDMAP_LEN-1 //IOT对系统的设置数据16Byte，内存表最后一单元保存flash擦写次数 
 
 //固件版本号
-#define FW_VERSION			    (u16)(0x100)
+//不带把套加热版本
+#define FW_VERSION			    (u16)(0x110)
+//带把套加热版本
+//#define FW_VERSION			    (u16)(0x101)
 
 //各模块ID相关宏定义
 
@@ -79,9 +82,6 @@
 //NFC数据更新命令
 #define CMD_NFC_UPDATE            0xE0  //上载NFC信息
 
-
-
-
 //达等相关宏定义
 #define LED_OFF      0
 #define LED_ON       1
@@ -90,10 +90,8 @@
 
 #define COM1MSG_Q_NUM           256
 
-
 //故障码定义
 #define MINI_ERROR_MCU_COM	              51   //控制器仪表通信异常
-
 
 //布尔变量相关宏定义
 #define B_LEN				  26  //布尔变量长度
@@ -274,19 +272,16 @@ typedef struct
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-extern volatile u8 g_bool[B_LEN];		//布尔变量
+extern volatile u8  g_bool[B_LEN];		//布尔变量
 extern volatile u16 g_Clear_error_cnt;  //故障清零计数
-extern volatile u8 g_ErrorByte;
-extern volatile u8 g_wireless_charger_vol; 
-extern volatile u8 g_12V_vol;
+extern volatile u8  g_ErrorByte;
+extern volatile u8  g_wireless_charger_vol; 
 extern volatile u16 g_leftBreakGnd_vol;
 extern volatile u16 g_rightBreakGnd_vol;
 extern volatile u16 g_accGnd_vol;
 extern QueueHandle_t COM1_Message_Queue;
-extern MYSELF_DATA g_myself_data;
-//extern MC_RUNNING_DATA MC_Running_data;
+extern MYSELF_DATA  g_myself_data;
 extern volatile s16 g_NBCmdMap[NB_CMDMAP_LEN];	//内存控制表
-//extern PN_WR_STR PN_Wr;
 
 /* Exported functions ------------------------------------------------------- */
 void COM1_Task(void *pvParameters);

@@ -59,5 +59,9 @@ void Ambient_light_Start(_AMBIENT_LIGHT_OB *p_this );
 void Ambient_Light_Set(void);
 void Ambient_Light_Breathe_Pro(_AMBIENT_LIGHT_OB *p_this);
 
+void Ambient_ClearColor(_AMBIENT_LIGHT_OB *p_this);
+void Ambient_Light_Changliang(_AMBIENT_LIGHT_OB *p_this);
+void Ambient_Timer_Cmp_Update(_AMBIENT_LIGHT_OB *p_this);
+
 #endif
 
