@@ -1,11 +1,3 @@
-/******************** (C) COPYRIGHT 2020 Ninebot *******************************
-* File Name     : Dis_Task.c
-* Author        : meihua
-* Version       : V1.0.0
-* Date          : 2020-11-13
-* Description   : 
-********************************************************************************/
-
 /* Includes ------------------------------------------------------------------*/
 #include "tm1650.h"
 #include "iic.h"
@@ -17,8 +9,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Variables -----------------------------------------------------------------*/
 #define Turn_Sig_light  0x08
-#define Green_LED                      0x01    //¬Ãµ∆
-#define Red_LED                        0x02    //∫Ïµ∆
+
 /*****************************************************************
 * Function Name : Dis_4LED
 * Description   : œ‘ æ÷∏∂® LED µ∆
@@ -127,7 +118,7 @@ static u8 Init_Show_Process(void )
 	static u8 s_timer_cn = 0;
 	s_timer_cn++;
 
-	if(s_timer_cn < 49) //0.5
+	if(s_timer_cn < 49) //1S
 	{
 		Dis_4LED(1);
 
@@ -153,45 +144,11 @@ static u8 Init_Show_Process(void )
 ******************************************************************/	
 void Display_Task(void *pvParameters)
 {
-//	static u8 Switch_step = INIT_SHOW_MODE;             //INIT_SHOW_MODE;
 	static u8 flash_flage = 0;
     static u8 dis_init = 0;
     
 	while(1)
 	{
-//		switch(Switch_step)
-//		{
-//		case INIT_SHOW_MODE:
-//			if(Init_Show_Process())                     // running only first time   
-//				Switch_step = NUM_SEGMENT_MODE; 	
-//			break;
-
-//		case NUM_SEGMENT_MODE:
-//			flash_flage = Dis_4LED(0);                  // ˝¬Îπ‹œ‘ æ
-//			Switch_step = RGB_MODE;
-//			break;
-
-//		case RGB_MODE:
-//			Handle_RGB_Control(flash_flage);                   //RGBµ∆øÿ÷∆
-//			Switch_step = AMBIENTLIGHT_MODE; 
-//			break;
-
-//        case AMBIENTLIGHT_MODE:
-//			Ambient_Light_Set();                        //∑’Œßµ∆øÿ÷∆
-//			Switch_step = NUM_SEGMENT_MODE; 
-//			break;
-//                
-//		default:
-//			break;
-//		}
-
-//        //TODO :TEST
-//        g_myself_data.Ambient_Light.AmbientLightMode = BREATHE_LED;
-//        Ambient_light_object.running_color = 7;
-//        //g_myself_data.Ambient_Light.AmbientLightColor = 7;
-//        g_myself_data.Ambient_Light.AmbientLightLux = 100;
-//        //END TODO :TEST
-
 #ifdef DEBUG_1
         g_myself_data.Ambient_Light.AmbientLightMode = BREATHE_LED;
         Ambient_light_object.running_color = 7;
@@ -211,7 +168,6 @@ void Display_Task(void *pvParameters)
 
         flash_flage = Dis_4LED(0);                  // ˝¬Îπ‹œ‘ æ
         Handle_RGB_Control(flash_flage);            //RGBµ∆øÿ÷∆
-        //Ambient_Light_Set();                        //∑’Œßµ∆øÿ÷∆
 
 		Check_IAP_Mode();
 		vTaskDelay(20);

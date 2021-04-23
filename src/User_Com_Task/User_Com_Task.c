@@ -1,11 +1,3 @@
-/******************** (C) COPYRIGHT 2020 Ninebot *******************************
-* File Name     : System_Config.c
-* Author        : meihua
-* Version       : V1.0.0
-* Date          : 2020-11-13
-* Description   : 
-********************************************************************************/
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "UartProtocol.h"
@@ -49,8 +41,8 @@ void COM1_Task(void *pvParameters)
 		UART3_CheckSend();
 		UART3_CheckReceive();
 
-        vTaskDelay(20); 
-    }    
+        vTaskDelay(1); 
+    }
 }
 
 

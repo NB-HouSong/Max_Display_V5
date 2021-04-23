@@ -274,7 +274,7 @@ static TASK_COMPONENTS TaskComps[] =
 	{0, 5, 5,    Beep_Ctrl_Pro},            //蜂鸣器控制函数
     
     {0, 5, 5,    turnLightProcess},         //转向灯进程
-    {0, 50, 50,  FrontLightProcess},           //大灯控制
+    {0, 50, 50,  FrontLightProcess},        //大灯控制
     {0, 20, 20,  MasterPowerCtrl},
 };
 

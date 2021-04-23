@@ -99,19 +99,19 @@ void SetReg(uchar addr,uchar regdata)
 {
     GPIO_ResetBits(PORT_NSS,PIN_NSS);	//NSS = 0;
     addr = (addr << 1) & 0x7F;
-    SPI_SendData8(NFC_SPI,addr);   /* Send SPI1 data */
+    SPI_SendData8(NFC_SPI,addr);        /* Send SPI1 data */
     //while(SPI_GetFlagStatus(NFC_SPI, SPI_FLAG_TXE)==RESET);	  /* Wait for SPI2 Tx buffer empty */
     while(SPI_I2S_GetFlagStatus(NFC_SPI, SPI_I2S_FLAG_RXNE)==RESET)
 			;
-    SPI_I2S_ClearFlag(NFC_SPI,SPI_I2S_FLAG_RXNE);
-    SPI_ReceiveData8(NFC_SPI);		 /* Read SPI2 received data */;
-    SPI_SendData8(NFC_SPI,regdata);   /* Send SPI2 data */
+    SPI_I2S_ClearFlag(NFC_SPI, SPI_I2S_FLAG_RXNE);
+    SPI_ReceiveData8(NFC_SPI);		    /* Read SPI2 received data */;
+    SPI_SendData8(NFC_SPI,regdata);     /* Send SPI2 data */
     //while(SPI_GetFlagStatus(NFC_SPI, SPI_FLAG_TXE)==RESET);
     while(SPI_I2S_GetFlagStatus(NFC_SPI, SPI_I2S_FLAG_RXNE)==RESET)
 			;
     SPI_I2S_ClearFlag(NFC_SPI,SPI_I2S_FLAG_RXNE);
-    SPI_ReceiveData8(NFC_SPI);		 /* Read SPI2 received data */
-    GPIO_SetBits(PORT_NSS,PIN_NSS);	//NSS = 1;
+    SPI_ReceiveData8(NFC_SPI);		    /* Read SPI2 received data */
+    GPIO_SetBits(PORT_NSS,PIN_NSS);	    //NSS = 1;
 
     return ;
 }

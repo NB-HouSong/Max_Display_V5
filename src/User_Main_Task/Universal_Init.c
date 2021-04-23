@@ -308,7 +308,7 @@ u16 ADC_Get_ConversionValue(u8 Channel)
 #define EBS_AD_TSD	 175					//EBS霍尔AD采样的最大值  理论值40~210
 void Get_RealVaule(void)
 {
-    static u8 leftBreakCnt = 0, rightBreakCnt = 0, accCnt = 0;
+//    static u8 leftBreakCnt = 0, rightBreakCnt = 0, accCnt = 0;
     g_myself_data.Handle_Bar_Info.GasValue = (ADC_Get_ConversionValue(AdcChanelAcc) >> 4) > 15 ? (ADC_Get_ConversionValue(AdcChanelAcc) >> 4) - 15 : 0;
     g_myself_data.Handle_Bar_Info.LeftBreakValue = (ADC_Get_ConversionValue(AdcChanelLeftBreak) >> 4) > 15 ? (ADC_Get_ConversionValue(AdcChanelLeftBreak) >> 4) - 15 : 0; 
     g_myself_data.Handle_Bar_Info.RightBreakValue = (ADC_Get_ConversionValue(AdcChanelRightBreak) >> 4) > 15 ? (ADC_Get_ConversionValue(AdcChanelRightBreak) >> 4) - 15 : 0 ;
@@ -393,7 +393,7 @@ void Timer2Init(void)      //Timer2,控制采样率
 }
 
 /*****************************************************************
-* Function Name : TIM2_IRQHandlerv 5us 进一次
+* Function Name : TIM2_IRQHandlerv 100us 进一次
 * Description   : Timer2的中断函数
 * Input         : None
 * Output        : None

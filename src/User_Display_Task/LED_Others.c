@@ -228,31 +228,32 @@ void ALL_RGB_OFF(void)
 ******************************************************************/ 
 void PowerON_RGB(void)
 {
-	static u8 s_cnt = 0;
-	s_cnt++;
-	
-	if(s_cnt < 2) //500ms
-	{
-		RGB_Bit_Set(RGB_NUM_RGB, 1/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-		//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 1/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-	}
-	else if(s_cnt < 5) 
-	{
-		RGB_Bit_Set(RGB_NUM_RGB, 2/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-		//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 2/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-		
-	}
-	else if(s_cnt < 7) 
-	{
-		RGB_Bit_Set(RGB_NUM_RGB, 4/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-		//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 4/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-	}
-	else
-	{
-		s_cnt = 7;
-		RGB_Bit_Set(RGB_NUM_RGB, 8/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-		//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 8/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
-	}
+//	static u8 s_cnt = 0;
+//	s_cnt++;
+//	
+//	if(s_cnt < 2) //500ms
+//	{
+//		RGB_Bit_Set(RGB_NUM_RGB, 1/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+//		//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 1/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+//	}
+//	else if(s_cnt < 5) 
+//	{
+//		RGB_Bit_Set(RGB_NUM_RGB, 2/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+//		//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 2/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+//		
+//	}
+//	else if(s_cnt < 7) 
+//	{
+//		RGB_Bit_Set(RGB_NUM_RGB, 4/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+//		//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 4/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+//	}
+//	else
+//	{
+//		s_cnt = 7;
+//		RGB_Bit_Set(RGB_NUM_RGB, 8/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+//		//RGB_Bit_Set(RGB_NUM_RIGHT_Ambientlight, 8/*DIS_Color_Set.PowerOn_color*/, RGB_brightness);
+//	}
+    RGB_Bit_Set(RGB_NUM_RGB, 7, RGB_brightness);
 	LED_DMA_Refresh();
 }
 

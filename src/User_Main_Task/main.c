@@ -62,7 +62,7 @@ void start_task(void *pvParameters)
                 (UBaseType_t    )CTRL_TASK_PRIO,
                 (TaskHandle_t*  )&Task2Task_Handler); 
 								
-	  xTaskCreate((TaskFunction_t )COM1_Task,     
+	xTaskCreate((TaskFunction_t )COM1_Task,     
                 (const char*    )"task3_task",   
                 (uint16_t       )COM1_STK_SIZE,
                 (void*          )NULL,

@@ -1,17 +1,12 @@
 #include "iic.h"
 
-#define WRITE_MASK  0xFD
-#define READ_MASK   0x02
 //IO操作函数
 #define IIC_SCL_0   GPIO_ResetBits(GPIOB, GPIO_Pin_0)
 #define IIC_SCL_1   GPIO_SetBits(GPIOB, GPIO_Pin_0)
 #define IIC_SDA_0   GPIO_ResetBits(GPIOB, GPIO_Pin_1)
 #define IIC_SDA_1   GPIO_SetBits(GPIOB, GPIO_Pin_1)
-//#define READ_SDA    GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1)   //输入SDA  
-#define READ_SDA    GPIOB->IDR  & GPIO_Pin_1   //输入SDA  
 
-//#define SCL_read      	SCL_GPIO->IDR  & SCL_PIN /* GPIO_ReadInputDataBit(GPIOB , GPIO_Pin_10) */
-//#define SDA_read      	SDA_GPIO->IDR  & SDA_PIN /* GPIO_ReadInputDataBit(GPIOB , GPIO_Pin_11) */
+#define READ_SDA    GPIOB->IDR  & GPIO_Pin_1   //输入SDA  
 
 #define SDA_IN()   {GPIOB->MODER &= ~GPIO_MODER_MODER1;}
 #define SDA_OUT()  {GPIOB->MODER &= ~GPIO_MODER_MODER1; GPIOB->MODER |= GPIO_MODER_MODER1_0;}    
@@ -512,116 +507,3 @@ I2C_APP IicGetAppStatus(void)
 {
     return iic_t.iic_state.Lock_app_status;
 }
-
-//#include "iic.h"
-
-//#define WRITE_MASK  0xFD
-//#define READ_MASK   0x02
-////IO操作函数
-//#define IIC_SCL_0   GPIO_ResetBits(GPIOB, GPIO_Pin_0)
-//#define IIC_SCL_1   GPIO_SetBits(GPIOB, GPIO_Pin_0)
-//#define IIC_SDA_0   GPIO_ResetBits(GPIOB, GPIO_Pin_1)
-//#define IIC_SDA_1   GPIO_SetBits(GPIOB, GPIO_Pin_1)
-//#define READ_SDA    GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1)   //输入SDA  
-
-//#define SDA_IN()   {GPIOB->MODER &= ~GPIO_MODER_MODER1;}
-//#define SDA_OUT()  {GPIOB->MODER &= ~GPIO_MODER_MODER1; GPIOB->MODER |= GPIO_MODER_MODER1_0;}   
-
-
-////初始化IIC     PB0 SCL ; PB1 SDA
-//void IIC_Init(void)
-//{
-//    GPIO_InitTypeDef GPIO_InitStructure;
-
-//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;       //输出
-//    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;      //推挽输出
-//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//    GPIO_Init(GPIOB, &GPIO_InitStructure);
-//    GPIO_SetBits(GPIOB, GPIO_Pin_0 | GPIO_Pin_1); 
-//}
-
-
-//void I2Cask(void) //ACK信号
-//{
-//    u8 timeout = 1;
-//    IIC_SCL_1;
-//    delay_us(5);
-//    IIC_SCL_0;
-//    SDA_IN();			//设置为输入上拉
-//    while((READ_SDA)&&(timeout<=100))
-//    {
-//        timeout++;
-//    }
-//    delay_us(5);
-//    IIC_SCL_1;
-//}
-
-//void I2CStart(void)	//开始信号
-//{
-//    SDA_OUT();
-//    
-//    IIC_SCL_1;
-//    IIC_SDA_1;
-//    delay_us(5);
-//    IIC_SDA_0;
-//    delay_us(5);
-//    IIC_SCL_0;
-//}
-
-//void I2CStop(void) //停止信号
-//{
-
-//    IIC_SCL_0;
-//    IIC_SDA_0;
-//    delay_us(5);
-//    IIC_SCL_1;
-//    delay_us(5);
-//    IIC_SDA_1;
-//    delay_us(5);
-//    IIC_SCL_0;
-//    IIC_SDA_0;
-//}
-
-//void I2CWrByte(u8 oneByte) //写一个字节高位在前，低位在后
-//{
-//    u8 i;
-//    SDA_OUT();
-//    delay_us(1);
-//    for(i=0; i<8; i++)
-//    {
-//        IIC_SCL_0;
-//        delay_us(1);
-//        if((oneByte & 0x01) == 0x01)
-//            IIC_SDA_1;
-//        else
-//            IIC_SDA_0;
-//        oneByte = oneByte>>1;
-//        delay_us(1);
-//        IIC_SCL_1;
-//        delay_us(1);
-//    }
-//    I2Cask();
-//}
-
-///************显示函数,地址自动加一************/
-//void TM1637_Set_tab(unsigned char *p, u8 brightness)
-//{
-//    unsigned char i;
-//    I2CStart();
-//    I2CWrByte(0x40);                                  //数据命令设置：地址自动加一，写数据到显示寄存器
-//    I2CStop();
-
-//    I2CStart();
-//    I2CWrByte(0xc0);                                  //地址命令设置:初始地址为00H
-//    for(i=0; i<6; i++)                                //发送数据到显存
-//    {
-//        I2CWrByte(*p);
-//        p++;
-//    }
-//    I2CStop();
-
-//    I2CStart();
-//    I2CWrByte(0x88 | brightness);                     //显示控制命令；开显示，脉冲宽度为11/16
-//    I2CStop();
-//}

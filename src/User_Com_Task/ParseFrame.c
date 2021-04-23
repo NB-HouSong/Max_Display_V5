@@ -5,7 +5,6 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Variables -----------------------------------------------------------------*/
-u8 pData_iap[150] = {0};
 
 /* Private function prototypes -----------------------------------------------*/
 /* Functions -----------------------------------------------------------------*/
@@ -38,25 +37,25 @@ u16 CheckSum(u8* pdata, u32 len)
 ******************************************************************/	
 u8 FormatFrame(u8 src_id, u8 dst_id, u8 DataLen, u8 Cmd, u8 Index, u8* pdata, u8* FormatBuf)
 {
-  u8 i = 0;
-  u8 pos = 0;
-  u16 csum = 0;
-  
-  FormatBuf[pos++] = 0x5A;
-  FormatBuf[pos++] = 0xA5;
-  FormatBuf[pos++] = DataLen;
-  FormatBuf[pos++] = src_id;
-	FormatBuf[pos++] = dst_id;
-  FormatBuf[pos++] = Cmd;
-  FormatBuf[pos++] = Index;
-  for(i=0; i<DataLen; i++)
-  {
-    FormatBuf[pos++] = pdata[i];
-  }
-  csum = CheckSum(&FormatBuf[2],pos-2);
-  FormatBuf[pos++] = csum;
-  FormatBuf[pos++] = csum>>8;
-  return pos;
+    u8 i = 0;
+    u8 pos = 0;
+    u16 csum = 0;
+
+    FormatBuf[pos++] = 0x5A;
+    FormatBuf[pos++] = 0xA5;
+    FormatBuf[pos++] = DataLen;
+    FormatBuf[pos++] = src_id;
+    FormatBuf[pos++] = dst_id;
+    FormatBuf[pos++] = Cmd;
+    FormatBuf[pos++] = Index;
+    for(i=0; i<DataLen; i++)
+    {
+        FormatBuf[pos++] = pdata[i];
+    }
+    csum = CheckSum(&FormatBuf[2],pos-2);
+    FormatBuf[pos++] = csum;
+    FormatBuf[pos++] = csum>>8;
+    return pos;
 }
 
 /*****************************************************************
@@ -115,16 +114,6 @@ void ParseFrame(uint8_t Channel, uint8_t* pData)
                     Ambient_light_object.running_period = g_myself_data.RGB_Led.AmbientLight_Period = 2;
                     Ambient_light_object.running_mode   = g_myself_data.RGB_Led.AmbientLightMode = g_myself_data.Scooter_Info.AmbientLightMode;
                 }
-
-//                if((g_myself_data.Scooter_Info.AmbientLightMode & 0xf0) == RGB_AMBIENT_HANDLE)
-//                {
-//                    g_myself_data.RGB_Led.AmbientLightColor     = LIMIT(g_myself_data.Scooter_Info.AmbientLightColor, 1, 7);
-//                    g_myself_data.RGB_Led.AmbientLightLux       = LIMIT(g_myself_data.Scooter_Info.AmbientLightLux, 5, 99);
-//                    g_myself_data.RGB_Led.AmbientLight_Period   = 2;
-////                    g_myself_data.RGB_Led.AmbientLight_Period   = (g_myself_data.Scooter_Info.AmbientLight_Period & 0x0F) * 1000 / 
-////                                                                  ( g_myself_data.Scooter_Info.AmbientLightLux - g_myself_data.Scooter_Info.AmbientLight_Off_Intens) / 5;
-//                    g_myself_data.RGB_Led.AmbientLightMode      = g_myself_data.Scooter_Info.AmbientLightMode & 0x0f;
-//                }
                 break;
             case CMD_IAP_BEGIN:
             case CMD_IAP_WR:

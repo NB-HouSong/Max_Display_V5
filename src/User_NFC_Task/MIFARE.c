@@ -320,6 +320,7 @@ unsigned char Mifare_Transfer(unsigned char block)
         return FM175XX_COMM_ERR;
     return FM175XX_SUCCESS;
 }
+
 /*****************************************************************************************/
 /*名称：mifare_restore																	 */
 /*功能：Mifare 卡片restore操作															 */
@@ -328,10 +329,8 @@ unsigned char Mifare_Transfer(unsigned char block)
 /*		OK    :成功																		 */
 /*		ERROR :失败																		 */
 /*****************************************************************************************/
-
 unsigned char Mifare_Restore(unsigned char block)
 {
-
     uchar outbuf[4],inbuf[1];
     command_struct command_status;
     command_status.pSendBuf = outbuf;

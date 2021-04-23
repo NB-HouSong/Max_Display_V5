@@ -105,32 +105,7 @@ void Peripherals_Clock_Init(FunctionalState NewState)
 void NVIC_Configuration(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
-	
-//	NVIC_InitStructure.NVIC_IRQChannel = PVD_VDDIO2_IRQn;
-//	NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
-//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//	NVIC_Init(&NVIC_InitStructure);
-	
-//	NVIC_InitStructure.NVIC_IRQChannel = TIM6_DAC_IRQn;
-//	NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
-//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//	NVIC_Init(&NVIC_InitStructure);
-	
-//	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
-//	NVIC_InitStructure.NVIC_IRQChannelPriority = 1;
-//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//	NVIC_Init(&NVIC_InitStructure);
-    
-//	NVIC_InitStructure.NVIC_IRQChannel = USART3_4_IRQn;
-//	NVIC_InitStructure.NVIC_IRQChannelPriority = 1;
-//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//	NVIC_Init(&NVIC_InitStructure);
 
-//	NVIC_InitStructure.NVIC_IRQChannel = EXTI4_15_IRQn;
-//	NVIC_InitStructure.NVIC_IRQChannelPriority = 4;
-//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//	NVIC_Init(&NVIC_InitStructure);
-	
 	NVIC_InitStructure.NVIC_IRQChannel = EXTI2_3_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPriority = 3;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -143,56 +118,7 @@ void NVIC_Configuration(void)
 		
     NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel2_3_IRQn;
     NVIC_Init(&NVIC_InitStructure);
-    
-//    NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel4_5_6_7_IRQn;
-//    NVIC_Init(&NVIC_InitStructure);
-
-	/* Enable RTC_IRQn */
-//	NVIC_InitStructure.NVIC_IRQChannel = RTC_IRQn;
-//	NVIC_InitStructure.NVIC_IRQChannelPriority = 5;
-//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//	NVIC_Init(&NVIC_InitStructure);
 }
-
-///*****************************************************************
-//* Function Name : POWER_CTR_IO_INIT
-//* Description   : 电源模块开关控制引脚初始化
-//* Input         : None
-//* Output        : 
-//* Notes         :
-//******************************************************************/
-//void POWER_CTR_IO_INIT(void)
-//{
-//    GPIO_InitTypeDef GPIO_InitStructure;
-//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;       //大灯、尾灯、语音、锁的电源控制脚
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//    GPIO_Init(GPIOB, &GPIO_InitStructure);
-//	
-//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;       //无线充、显示、氛围灯的电源控制脚
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//    GPIO_Init(GPIOC, &GPIO_InitStructure);	
-//	
-//	GPIO_InitStructure.GPIO_Pin = CHARGER_IN_PIN;   //充电器插入检测引脚
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//    GPIO_Init(CHARGER_IN_GPIO, &GPIO_InitStructure);
-//	
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;   //硬件版本检测引脚
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//    GPIO_Init(GPIOC, &GPIO_InitStructure);
-//	
-//	g_myself_data.DIS_Version_hw.Dis_HardwareVersion = (GPIOC->IDR >> 13) & 0x0007;	//获取硬件版本号
-//}
 
 /*****************************************************************
 * Function Name : InitAllPeripherals
@@ -239,75 +165,6 @@ void InitAllPeripherals( void )
  
     EXTI_Config();          //放在外面，否则会产生中断
 }
-
-///*****************************************************************
-//* Function Name : LOwpower_IO_Init
-//* Description   : 低功耗引脚及外设初始化
-//* Input         : None
-//* Output        : 
-//* Notes         :
-//******************************************************************/
-//void LOwpower_IO_Init(void)
-//{
-//	GPIO_InitTypeDef  GPIO_InitStructure;
-//	
-//	//低功耗关闭ADC
-//	ADC_StopOfConversion(ADC_USE);
-//	ADC_DMACmd(ADC_USE,DISABLE);
-//	DMA_Cmd(ADC_DMA_CH, DISABLE);
-//	ADC_Cmd(ADC_USE, DISABLE);
-//	ADC_DeInit(ADC_USE);
-//	
-//	//低功耗关闭CAN
-//	CAN_DeInit(CAN);
-//	
-//	//低功耗关闭串口
-//	USART_DMACmd(EXT_UART3, USART_DMAReq_Rx, DISABLE);
-//	DMA_Cmd(EUART3_RX_DMA_CH, DISABLE);
-//	USART_Cmd(EXT_UART3, DISABLE);
-//	USART_DeInit(EXT_UART3);
-//	
-//	//低功耗关闭定时器
-//	TIM_Cmd(TIM1, DISABLE);
-//	TIM_Cmd(TIM2, DISABLE);
-//	TIM_Cmd(TIM3, DISABLE);
-//	TIM_Cmd(TIM6, DISABLE);
-
-//	//上拉输入
-//	GPIO_StructInit(&GPIO_InitStructure);
-//	
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		//50M时钟速度
-//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-//	
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;  //刹车1 刹车2
-//	GPIO_Init(GPIOA, &GPIO_InitStructure);
-//	
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;              //串口3 Rx
-//	GPIO_Init(GPIOB, &GPIO_InitStructure);
-//	
-//	//浮空输入
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		//50M时钟速度
-//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//	
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_4 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_11 | GPIO_Pin_12;  //数码管显示控制引脚
-//	GPIO_Init(GPIOA, &GPIO_InitStructure);
-//	
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_8 | GPIO_Pin_9;  //CAN RX TX
-//	GPIO_Init(GPIOB, &GPIO_InitStructure);
-//	
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;  //语音flash控制引脚
-//	GPIO_Init(GPIOB, &GPIO_InitStructure);
-//	
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;  //
-//	GPIO_Init(GPIOC, &GPIO_InitStructure);
-//	
-//	//关闭外设时钟
-//	Peripherals_Clock_Init(DISABLE);
-//	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, DISABLE);
-//	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, DISABLE);
-//}
 
 /*****************************************************************
 * Function Name : ReadUniqueID

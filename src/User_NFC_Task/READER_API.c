@@ -90,12 +90,12 @@ unsigned char Command_Execute(command_struct *comm_status)
     comm_status->CollPos = 0;
     comm_status->Error = 0;
 
-    SetReg(JREG_COMMAND,CMD_IDLE);//command = Idel
+    SetReg(JREG_COMMAND,CMD_IDLE);  //command = Idel
     Clear_FIFO();//Clear FIFO
-    SetReg(JREG_WATERLEVEL,0x20);//waterlevel = 32bytes
-    SetReg(JREG_DIVIEN,0x00);//Disable DIVIRQ to be propagated to IRQ pin
-    SetReg(JREG_COMMIEN,0x80);//Disable COMMIRQ to be propagated to IRQ pin
-    SetReg(JREG_COMMIRQ,0x7F);//Clear COMMIRQ
+    SetReg(JREG_WATERLEVEL,0x20);   //waterlevel = 32bytes
+    SetReg(JREG_DIVIEN,0x00);       //Disable DIVIRQ to be propagated to IRQ pin
+    SetReg(JREG_COMMIEN,0x80);      //Disable COMMIRQ to be propagated to IRQ pin
+    SetReg(JREG_COMMIRQ,0x7F);      //Clear COMMIRQ
 
     SetSendCRC(comm_status->SendCRCEnable);//Config TxCRC
     SetReceiveCRC(comm_status->ReceiveCRCEnable);//Config RxCRC
@@ -146,7 +146,6 @@ unsigned char Command_Execute(command_struct *comm_status)
         {
             if(send_length > 0)
             {
-
                 if(send_length > 32)
                 {
                     SPI_Write_FIFO(32,comm_status->pSendBuf);//Write 32 bytes to FIFO
@@ -158,8 +157,7 @@ unsigned char Command_Execute(command_struct *comm_status)
                     SPI_Write_FIFO(send_length,comm_status->pSendBuf);
                     send_length = 0;
                 }
-                ModifyReg(JREG_BITFRAMING,BIT7,SET);
-							
+                ModifyReg(JREG_BITFRAMING,BIT7,SET);		
             }
             SetReg(JREG_COMMIRQ,BIT2);//Clear COMMIRQ BIT2
 							
@@ -184,7 +182,6 @@ unsigned char Command_Execute(command_struct *comm_status)
 
         if((irq & BIT5)&&((comm_status->Cmd == CMD_TRANSCEIVE)||(comm_status->Cmd == CMD_RECEIVE)))//RxIRq = 1
         {
-
             GetReg(JREG_CONTROL,&reg_data);
             comm_status->nBitsReceived = reg_data & 0x07;//Get length of bits received
             GetReg(JREG_FIFOLEVEL,&reg_data);//Get length of bytes received
@@ -223,8 +220,8 @@ unsigned char Command_Execute(command_struct *comm_status)
 
 void FM175XX_Initial_ReaderA(void)
 {
-    SetReg(JREG_TXMODE,0x00);//TxCRCEnable = 0; TxSpeed = 106kbps; InvMode = 0; TxMix = 0; TxFraming = ISO14443A
-    SetReg(JREG_RXMODE,BIT3);	//RxCRCEnable = 0; RxSpeed = 106kbps;RxNoError = 1; RxMultiple = 0; RxFraming = ISO14443A
+    SetReg(JREG_TXMODE,0x00);   //TxCRCEnable = 0; TxSpeed = 106kbps; InvMode = 0;   TxMix = 0; TxFraming = ISO14443A
+    SetReg(JREG_RXMODE,BIT3);	//RxCRCEnable = 0; RxSpeed = 106kbps; RxNoError = 1; RxMultiple = 0; RxFraming = ISO14443A
     SetReg(JREG_MODWIDTH,MODWIDTH_106);	//MODWIDTH = 106kbps
     ModifyReg(JREG_TXAUTO,BIT6,SET);//Force 100ASK = 1
     SetReg(JREG_GSN,(GSNON_A<<4));//Config GSN; Config ModGSN
@@ -294,7 +291,7 @@ unsigned char ReaderA_Wakeup(void)
 
     if((result == FM175XX_SUCCESS)&&(command_status.nBytesReceived == 2))
     {
-        memcpy(PICC_A.ATQA,command_status.pReceiveBuf,2);
+        memcpy(PICC_A.ATQA, command_status.pReceiveBuf,2);
     }
     else
         result =  FM175XX_COMM_ERR;
@@ -408,7 +405,7 @@ void SetRf(unsigned char mode)
 {
     if(mode == 0)
     {
-        ModifyReg(JREG_TXCONTROL,BIT0|BIT1,RESET);
+        ModifyReg(JREG_TXCONTROL,BIT0|BIT1, RESET);
     }
     if(mode == 1)
     {
@@ -585,7 +582,6 @@ unsigned char ReaderB_GetUID(void)
     if(result == FM175XX_SUCCESS)
     {
         memcpy(PICC_B.UID, command_status.pReceiveBuf,8);
-
     }
     else
         result = FM175XX_COMM_ERR;
@@ -1299,7 +1295,7 @@ void LPCD_Read(void)
             if(s_polling_card & BIT0)//TYPE A
             {
 //							  PICC_A.Have_get_uid_status = 1;
-                result=TYPE_A_EVENT();
+                result = TYPE_A_EVENT();
                 //result=FM175XX_SUCCESS;
                 
                 //临时放在这儿
